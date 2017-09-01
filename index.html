@@ -1,71 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
 <p>Here are contained a few toy examples of how powerful abstracting over monads can be in HEP. I'm not going to discuss haskell syntax carefully here: sorry, and I will leave a lot of details (e.g. the idea behind monads) for a future post. What I <em>will</em> recommend now is that you think of any context which is composable as forming a monad. Don't worry: it's not an easy concept, but I hope the examples below at least <em>motivate</em> how these abstractions can be <em>useful</em> in a real setting. Oh, and this is a literate haskell file, so you should be able to load it into ghci and run the examples like so.</p>
 <p>ghci HEPExample.lhs</p>
 <p>Let's start with a module delcaration and some imports:</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">HEPExample</span> <span class="kw">where</span>
-
-<span class="kw">import           </span><span class="dt">Control.Monad.Trans.Maybe</span>
-<span class="kw">import           </span><span class="dt">Data.Functor.Identity</span>
-<span class="kw">import           </span><span class="dt">Data.Monoid</span>               (<span class="dt">Product</span> (..))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">HEPExample</span> <span class="kw">where</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Monad.Trans.Maybe</span>
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Data.Functor.Identity</span>
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Data.Monoid</span>               (<span class="dt">Product</span> (..))</code></pre></div>
 <p>Then let's define an &quot;Event'&quot; data type which contains only two pieces of information: an electron pT and a muon pT.</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Event&#39;</span> <span class="fu">=</span> <span class="dt">Event&#39;</span> {<span class="ot"> elPt&#39; ::</span> <span class="dt">Double</span>,<span class="ot"> muPt&#39; ::</span> <span class="dt">Double</span> }
-
-<span class="ot">evt&#39; ::</span> <span class="dt">Event&#39;</span>
-evt&#39; <span class="fu">=</span> <span class="dt">Event&#39;</span> <span class="fl">25.5</span> <span class="fl">52.4</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Event&#39;</span> <span class="fu">=</span> <span class="dt">Event&#39;</span> {<span class="ot"> elPt&#39; ::</span> <span class="dt">Double</span>,<span class="ot"> muPt&#39; ::</span> <span class="dt">Double</span> }
+<span class="ot">&gt;</span> 
+<span class="ot">&gt; evt&#39; ::</span> <span class="dt">Event&#39;</span>
+<span class="ot">&gt;</span> evt&#39; <span class="fu">=</span> <span class="dt">Event&#39;</span> <span class="fl">25.5</span> <span class="fl">52.4</span></code></pre></div>
 <p>Now we have a new type as well as an value inhabiting it called &quot;evt'&quot;: piece of cake. If you could read the future you would know that I call this data type &quot;Event'&quot; as opposed to &quot;Event&quot; because in a few minutes we're going to make everything a <em>heck of a lot</em> fancier.</p>
 <p>Next let's define a function that takes as input an Event' and calculates an observable: the pT sum of the two leptons in the event.</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">sumPt&#39; ::</span> <span class="dt">Event&#39;</span> <span class="ot">-&gt;</span> <span class="dt">Double</span>
-sumPt&#39; evt <span class="fu">=</span>
-  <span class="kw">let</span> ept <span class="fu">=</span> elPt&#39; evt
-      mpt <span class="fu">=</span> muPt&#39; evt
-  <span class="kw">in</span> ept <span class="fu">+</span> mpt</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt; sumPt&#39; ::</span> <span class="dt">Event&#39;</span> <span class="ot">-&gt;</span> <span class="dt">Double</span>
+<span class="ot">&gt;</span> sumPt&#39; evt <span class="fu">=</span>
+<span class="ot">&gt;</span>   <span class="kw">let</span> ept <span class="fu">=</span> elPt&#39; evt
+<span class="ot">&gt;</span>       mpt <span class="fu">=</span> muPt&#39; evt
+<span class="ot">&gt;</span>   <span class="kw">in</span> ept <span class="fu">+</span> mpt</code></pre></div>
 <p>Woohoo! If you've loaded this file into ghci, you can run something like</p>
-<p>sumPt' evt'</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sumPt&#39; evt&#39;</code></pre></div>
 <p>and you should get the obvious answer back.</p>
 <p>ok: so far so good? I'll assume yes. Let's make things interesting: I want my &quot;Event&quot; type now to be able to return some kind of <em>context</em> around the lepton pTs. What do I mean by context? Maybe I mean a pT with some scale factor correction, the pT of a lepton that may have failed some previous identification cut, or a nominal pT with some set of systematic variations. All of these are possible if we redefine the &quot;Event&quot; data type to be parameterized by the <em>type of context</em>!</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Event</span> m <span class="fu">=</span> <span class="dt">Event</span> {<span class="ot"> elPt ::</span> m <span class="dt">Double</span>,<span class="ot"> muPt ::</span> m <span class="dt">Double</span> }</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Event</span> m <span class="fu">=</span> <span class="dt">Event</span> {<span class="ot"> elPt ::</span> m <span class="dt">Double</span>,<span class="ot"> muPt ::</span> m <span class="dt">Double</span> }</code></pre></div>
 <p>Wow: what does this even mean? Let's do something <em>silly</em> to give ourselve a concrete example: let's use a trivial context, a container that just holds onto the original value. In haskell this is called the Identity type. We can easily make an &quot;Event&quot; with a trivial context:</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">evtId ::</span> <span class="dt">Event</span> <span class="dt">Identity</span>
-evtId <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Identity</span> <span class="fl">25.5</span>) (<span class="dt">Identity</span> <span class="fl">52.4</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt; evtId ::</span> <span class="dt">Event</span> <span class="dt">Identity</span>
+<span class="ot">&gt;</span> evtId <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Identity</span> <span class="fl">25.5</span>) (<span class="dt">Identity</span> <span class="fl">52.4</span>)</code></pre></div>
 <p>The discerning reader will realize that this is exactly isomorphic to the &quot;evt'&quot; we defined above: there's no new information added or removed by the &quot;Identity&quot; constructors. To the discerning reader I say, &quot;Trust me: this is a baby step, but a baby step in the right direction!&quot;</p>
 <p>So far we've overcomplicated our &quot;Event'&quot; type for nothing; let's go farther and overcomplicate the &quot;sumPt'&quot; function. One common way to <em>lift</em> a &quot;regular&quot; function like &quot;sumPt'&quot; to a &quot;contextified&quot; function is to use haskell's &quot;do-notation&quot;. In the end this is really just syntactic sugar, but like many things in the haskell world, it's well-motivated by some quite nice (if quite abstract) mathematics. One rule of thumb to perform this function <em>lifting</em> is to replace &quot;let&quot; bindings by &quot;monadic assignments&quot; (I put this in quotes because I don't like the word &quot;assignment&quot; very much, but I can't think of anything better) and make sure to &quot;return&quot; the final value, like so:</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="ot">sumPt ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> <span class="dt">Event</span> m <span class="ot">-&gt;</span> m <span class="dt">Double</span>
-sumPt evt <span class="fu">=</span> <span class="kw">do</span>
-  ept <span class="ot">&lt;-</span> elPt evt    <span class="co">-- &quot;monadic assignment&quot;</span>
-  mpt <span class="ot">&lt;-</span> muPt evt    <span class="co">-- &quot;monadic assignment&quot;</span>
-  return (ept <span class="fu">+</span> mpt) <span class="co">-- &quot;return&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt; sumPt ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> <span class="dt">Event</span> m <span class="ot">-&gt;</span> m <span class="dt">Double</span>
+<span class="ot">&gt;</span> sumPt evt <span class="fu">=</span> <span class="kw">do</span>
+<span class="ot">&gt;</span>   ept <span class="ot">&lt;-</span> elPt evt    <span class="co">-- &quot;monadic assignment&quot;</span>
+<span class="ot">&gt;</span>   mpt <span class="ot">&lt;-</span> muPt evt    <span class="co">-- &quot;monadic assignment&quot;</span>
+<span class="ot">&gt;</span>   return (ept <span class="fu">+</span> mpt) <span class="co">-- &quot;return&quot;</span></code></pre></div>
 <p>Try it:</p>
-<p>sumPt evtId</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sumPt evtId</code></pre></div>
 <p>Hopefully that returns (effectively) the same answer that we got earlier!</p>
 <p>Now for the real fun: what if we had a different context?! Let's try the case that perhaps we're missing an electron or muon. This &quot;perhaps we have something, perhaps not&quot; is generally encoded by the &quot;Maybe&quot; type in haskell. It has two constructors: &quot;Just&quot; and &quot;Nothing&quot;. If we have a value x, then the value-with-context will be &quot;Just x&quot;; if the value is missing, then we have &quot;Nothing&quot;. Let's try defining some &quot;Event&quot;s that might be missing some leptons.</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell">evtElMu, evtElNoMu,<span class="ot"> evtNoElMu ::</span> <span class="dt">Event</span> <span class="dt">Maybe</span>
-
-evtElMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Just</span> <span class="fl">25.5</span>) (<span class="dt">Just</span> <span class="fl">54.2</span>)
-
-evtElNoMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Just</span> <span class="fl">25.5</span>) <span class="dt">Nothing</span>
-
-evtNoElMu <span class="fu">=</span> <span class="dt">Event</span> <span class="dt">Nothing</span> (<span class="dt">Just</span> <span class="fl">54.2</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> evtElMu, evtElNoMu,<span class="ot"> evtNoElMu ::</span> <span class="dt">Event</span> <span class="dt">Maybe</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtElMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Just</span> <span class="fl">25.5</span>) (<span class="dt">Just</span> <span class="fl">54.2</span>)
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtElNoMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Just</span> <span class="fl">25.5</span>) <span class="dt">Nothing</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtNoElMu <span class="fu">=</span> <span class="dt">Event</span> <span class="dt">Nothing</span> (<span class="dt">Just</span> <span class="fl">54.2</span>)</code></pre></div>
 <p>What's really great about &quot;Maybe&quot; is that this context is <em>composable</em>, so we can use it in our generic monadic code! Try it out:</p>
-<p>sumPt evtElMu sumPt evtElNoMu sumPt evtNoElMu</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sumPt evtElMu
+sumPt evtElNoMu
+sumPt evtNoElMu</code></pre></div>
 <p>What happened here? Well, if we have both an electron and a muon, that's great: we have a well-defined sumPt. If we're missing either input to the sumPt calculation, though, well... we can't do the calculation, so we get &quot;Nothing&quot; back! Now you might say, &quot;why don't I just use a default value&quot;. I'll let you think carefully about that one and come up with your own reasons as to why default values are, in general, a Really Bad Idea.</p>
 <p>Let's take a moment to bask in the glory of our code. We wrote one function that was polymorphic in the <em>contexts</em> an Event might have to return, and we've seen that we can make that context trivial (Identity) or represent some pass-or-fail algebra (Maybe). But we know that our code is even more general than that: any composable context (&quot;Monad&quot;) will do.</p>
 <p>Shall we try another? How about this: let's take on &quot;scale factors&quot;. What if our Event's electron and muon each come with some scale factor that ought to be taken into account? Well, it's clear what to do in such cases: we use the electron and muon as normal, but we need to <em>multiply</em> their scale factors in the computation. We've just defined (broken record alert) yet another composable context: the context is some additional information (the scale factor), and we compose scale factors by multiplying them. And by black magic all of this already lives in the base haskell libraries.</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">SF</span> <span class="fu">=</span> <span class="dt">Product</span> <span class="dt">Double</span>
-
-<span class="ot">evtSF ::</span> <span class="dt">Event</span> ((,) <span class="dt">SF</span>)
-evtSF <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="fl">25.5</span>) (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="fl">54.2</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">type</span> <span class="dt">SF</span> <span class="fu">=</span> <span class="dt">Product</span> <span class="dt">Double</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt; evtSF ::</span> <span class="dt">Event</span> ((,) <span class="dt">SF</span>)
+<span class="ot">&gt;</span> evtSF <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="fl">25.5</span>) (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="fl">54.2</span>)</code></pre></div>
 <p>If that's not 100% clear, &quot;evtSF&quot; is an &quot;Event&quot; whose electrons and muons have some scale factor associated to them. The &quot;Product&quot; type knows how to correctly <em>combine</em> with itself: multiplication! &quot;But why is this necessary? Why can't I just use regular old Doubles for my scale factors&quot;, you ask. Well, because the real numbers have many ways of combining with one another: addition, multiplication, etc.; we need to be sure that when we combine them, they always multiply. Let's try this out.</p>
-<p>sumPt evtSF</p>
-<p>SeemsGood.</p>
-<p>ok. Let's introduce one more wrinkle: what if I want to combine scale factors <em>and</em> the possibility of failure? Turns out the mathematicians are ahead of us once again: we want a <em>composition</em> of the two contexts discussed above, and such compositions exist and are allowed in haskell. (Warning: this is getting pretty advanced even for me).</p>
-<div class="sourceCode"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">PhysObj</span> <span class="fu">=</span> <span class="dt">MaybeT</span> ((,) <span class="dt">SF</span>)
-
-evtPOElMu, evtPOElNoMu,<span class="ot"> evtPONoElMu ::</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> ((,) (<span class="dt">Product</span> <span class="dt">Double</span>)))
-
-evtPOElMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="dt">Just</span> <span class="fl">25.5</span>)) (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="dt">Just</span> <span class="fl">54.2</span>))
-
-evtPOElNoMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="dt">Just</span> <span class="fl">25.5</span>)) (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="dt">Nothing</span>))
-
-evtPONoElMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="dt">Nothing</span>)) (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="dt">Just</span> <span class="fl">54.2</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sumPt evtSF</code></pre></div>
+<p>SeemsGood. In fact, what's <em>really</em> great about this is that there is never any question as to which scale factors apply to the calculation of an observable.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">elPt evtSF</code></pre></div>
+<p>only accesses the information relevant to the electron in the event, so only the electron scale factor plays a role in the output. This generalizes to any computation that abstracts over all monadic contexts: the contexts are correctly propagated <em>automatically</em>!</p>
+<p>ok: let's introduce one more wrinkle: what if I want to combine scale factors <em>and</em> the possibility of failure? Turns out the mathematicians are ahead of us once again: we want a <em>composition</em> of the two contexts discussed above, and such compositions exist and are allowed in haskell. (Warning: this is getting pretty advanced even for me).</p>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">type</span> <span class="dt">PhysObj</span> <span class="fu">=</span> <span class="dt">MaybeT</span> ((,) <span class="dt">SF</span>)
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtPOElMu, evtPOElNoMu,<span class="ot"> evtPONoElMu ::</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> ((,) (<span class="dt">Product</span> <span class="dt">Double</span>)))
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtPOElMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="dt">Just</span> <span class="fl">25.5</span>)) (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="dt">Just</span> <span class="fl">54.2</span>))
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtPOElNoMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="dt">Just</span> <span class="fl">25.5</span>)) (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="dt">Nothing</span>))
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> evtPONoElMu <span class="fu">=</span> <span class="dt">Event</span> (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">1.1</span>, <span class="dt">Nothing</span>)) (<span class="dt">MaybeT</span> (<span class="dt">Product</span> <span class="fl">0.93</span>, <span class="dt">Just</span> <span class="fl">54.2</span>))</code></pre></div>
 <p>&quot;MaybeT&quot; is called a <em>monad transformer</em> because it <em>transforms</em> the scale factor context into a context that handles both scale factors and the additional possibility of failure.</p>
-<p>sumPt evtPOElMu sumPt evtPOElNoMu sumPt evtPONoElMu</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sumPt evtPOElMu
+sumPt evtPOElNoMu
+sumPt evtPONoElMu</code></pre></div>
 <p>So... our single &quot;sumPt&quot; function is pretty powerful, no?</p>
+</body>
+</html>

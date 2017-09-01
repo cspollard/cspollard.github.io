@@ -14,23 +14,19 @@ ghci HEPExample.lhs
 
 Let's start with a module delcaration and some imports:
 
-\begin{code}
-module HEPExample where
-
-import           Control.Monad.Trans.Maybe
-import           Data.Functor.Identity
-import           Data.Monoid               (Product (..))
-\end{code}
+> module HEPExample where
+>
+> import           Control.Monad.Trans.Maybe
+> import           Data.Functor.Identity
+> import           Data.Monoid               (Product (..))
 
 Then let's define an "Event'" data type which contains only two pieces of
 information: an electron pT and a muon pT.
 
-\begin{code}
-data Event' = Event' { elPt' :: Double, muPt' :: Double }
-
-evt' :: Event'
-evt' = Event' 25.5 52.4
-\end{code}
+> data Event' = Event' { elPt' :: Double, muPt' :: Double }
+>
+> evt' :: Event'
+> evt' = Event' 25.5 52.4
 
 Now we have a new type as well as an value inhabiting it called "evt'": piece of
 cake.
@@ -41,18 +37,16 @@ _heck of a lot_ fancier.
 Next let's define a function that takes as input an Event' and calculates an
 observable: the pT sum of the two leptons in the event.
 
-\begin{code}
-sumPt' :: Event' -> Double
-sumPt' evt =
-  let ept = elPt' evt
-      mpt = muPt' evt
-  in ept + mpt
-\end{code}
+> sumPt' :: Event' -> Double
+> sumPt' evt =
+>   let ept = elPt' evt
+>       mpt = muPt' evt
+>   in ept + mpt
 
 Woohoo!
 If you've loaded this file into ghci, you can run something like
 
-sumPt' evt'
+< sumPt' evt'
 
 and you should get the obvious answer back.
 
@@ -67,9 +61,7 @@ systematic variations.
 All of these are possible if we redefine the "Event" data type to be
 parameterized by the _type of context_!
 
-\begin{code}
-data Event m = Event { elPt :: m Double, muPt :: m Double }
-\end{code}
+> data Event m = Event { elPt :: m Double, muPt :: m Double }
 
 Wow: what does this even mean?
 Let's do something _silly_ to give ourselve a concrete example: let's use a
@@ -77,10 +69,8 @@ trivial context, a container that just holds onto the original value.
 In haskell this is called the Identity type.
 We can easily make an "Event" with a trivial context:
 
-\begin{code}
-evtId :: Event Identity
-evtId = Event (Identity 25.5) (Identity 52.4)
-\end{code}
+> evtId :: Event Identity
+> evtId = Event (Identity 25.5) (Identity 52.4)
 
 The discerning reader will realize that this is exactly isomorphic to the
 "evt'" we defined above: there's no new information added or removed by the
@@ -100,17 +90,15 @@ bindings by "monadic assignments" (I put this in quotes because I don't like the
 word "assignment" very much, but I can't think of anything better) and make sure
 to "return" the final value, like so:
 
-\begin{code}
-sumPt :: Monad m => Event m -> m Double
-sumPt evt = do
-  ept <- elPt evt    -- "monadic assignment"
-  mpt <- muPt evt    -- "monadic assignment"
-  return (ept + mpt) -- "return"
-\end{code}
+> sumPt :: Monad m => Event m -> m Double
+> sumPt evt = do
+>   ept <- elPt evt    -- "monadic assignment"
+>   mpt <- muPt evt    -- "monadic assignment"
+>   return (ept + mpt) -- "return"
 
 Try it:
 
-sumPt evtId
+< sumPt evtId
 
 Hopefully that returns (effectively) the same answer that we got earlier!
 
@@ -123,23 +111,21 @@ If we have a value x, then the value-with-context will be "Just x"; if the value
 is missing, then we have "Nothing".
 Let's try defining some "Event"s that might be missing some leptons.
 
-\begin{code}
-evtElMu, evtElNoMu, evtNoElMu :: Event Maybe
-
-evtElMu = Event (Just 25.5) (Just 54.2)
-
-evtElNoMu = Event (Just 25.5) Nothing
-
-evtNoElMu = Event Nothing (Just 54.2)
-\end{code}
+> evtElMu, evtElNoMu, evtNoElMu :: Event Maybe
+>
+> evtElMu = Event (Just 25.5) (Just 54.2)
+>
+> evtElNoMu = Event (Just 25.5) Nothing
+>
+> evtNoElMu = Event Nothing (Just 54.2)
 
 What's really great about "Maybe" is that this context is _composable_, so we
 can use it in our generic monadic code!
 Try it out:
 
-sumPt evtElMu
-sumPt evtElNoMu
-sumPt evtNoElMu
+< sumPt evtElMu
+< sumPt evtElNoMu
+< sumPt evtNoElMu
 
 What happened here?
 Well, if we have both an electron and a muon, that's great: we have a
@@ -169,12 +155,10 @@ factors by multiplying them.
 And by black magic all of this already lives in the base haskell libraries.
 
 
-\begin{code}
-type SF = Product Double
-
-evtSF :: Event ((,) SF)
-evtSF = Event (Product 1.1, 25.5) (Product 0.93, 54.2)
-\end{code}
+> type SF = Product Double
+>
+> evtSF :: Event ((,) SF)
+> evtSF = Event (Product 1.1, 25.5) (Product 0.93, 54.2)
 
 If that's not 100\% clear, "evtSF" is an "Event" whose electrons and muons have
 some scale factor associated to them.
@@ -186,36 +170,42 @@ addition, multiplication, etc.; we need to be sure that when we combine them,
 they always multiply.
 Let's try this out.
 
-sumPt evtSF
+< sumPt evtSF
 
 SeemsGood.
+In fact, what's _really_ great about this is that there is never any question as
+to which scale factors apply to the calculation of an observable.
 
-ok.
-Let's introduce one more wrinkle: what if I want to combine scale factors _and_
-the possibility of failure?
+< elPt evtSF
+
+only accesses the information relevant to the electron in the event, so only the
+electron scale factor plays a role in the output.
+This generalizes to any computation that abstracts over all monadic contexts:
+the contexts are correctly propagated _automatically_!
+
+ok: let's introduce one more wrinkle: what if I want to combine scale factors
+_and_ the possibility of failure?
 Turns out the mathematicians are ahead of us once again: we want a _composition_
 of the two contexts discussed above, and such compositions exist and are allowed
 in haskell.
 (Warning: this is getting pretty advanced even for me).
 
-\begin{code}
-type PhysObj = MaybeT ((,) SF)
-
-evtPOElMu, evtPOElNoMu, evtPONoElMu :: Event (MaybeT ((,) (Product Double)))
-
-evtPOElMu = Event (MaybeT (Product 1.1, Just 25.5)) (MaybeT (Product 0.93, Just 54.2))
-
-evtPOElNoMu = Event (MaybeT (Product 1.1, Just 25.5)) (MaybeT (Product 0.93, Nothing))
-
-evtPONoElMu = Event (MaybeT (Product 1.1, Nothing)) (MaybeT (Product 0.93, Just 54.2))
-\end{code}
+> type PhysObj = MaybeT ((,) SF)
+>
+> evtPOElMu, evtPOElNoMu, evtPONoElMu :: Event (MaybeT ((,) (Product Double)))
+>
+> evtPOElMu = Event (MaybeT (Product 1.1, Just 25.5)) (MaybeT (Product 0.93, Just 54.2))
+>
+> evtPOElNoMu = Event (MaybeT (Product 1.1, Just 25.5)) (MaybeT (Product 0.93, Nothing))
+>
+> evtPONoElMu = Event (MaybeT (Product 1.1, Nothing)) (MaybeT (Product 0.93, Just 54.2))
 
 "MaybeT" is called a _monad transformer_ because it _transforms_ the scale
 factor context into a context that handles both scale factors and the additional
 possibility of failure.
 
-sumPt evtPOElMu
-sumPt evtPOElNoMu
-sumPt evtPONoElMu
+< sumPt evtPOElMu
+< sumPt evtPOElNoMu
+< sumPt evtPONoElMu
 
 So... our single "sumPt" function is pretty powerful, no?
