@@ -163,16 +163,17 @@ And by black magic all of this already lives in the base haskell libraries.
 If that's not 100\% clear, "evtSF" is an "Event" whose electrons and muons have
 some scale factor associated to them: we now have a context of type
 
-< (,) (Product Double)
+< (,) SF
 
-which translates into a 2-tuple in which the first part is always a
-"Product Double".
-The "Product" type knows how to correctly _combine_ with itself: multiplication!
+which translates into a 2-tuple in which the first part is always a scale
+factor.
+The "SF" type (actually the type-aliased "Product Double" type) knows how to
+correctly _combine_ with itself: multiplication!
 "But why is this necessary? Why can't I just use regular old Doubles for my
 scale factors", you ask.
-Well, because the real numbers have many ways of combining with one another:
+Well, because the real numbers have many ways of combining with each another:
 addition, multiplication, etc.; we need to be sure that when we combine them,
-they always multiply.
+they always multiply and not one of those many other things.
 Let's try this out.
 
 < sumPt evtSF
