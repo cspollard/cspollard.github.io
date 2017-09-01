@@ -7,8 +7,10 @@ What I _will_ recommend now is that you think of any context which is composable
 as forming a monad.
 Don't worry: it's not an easy concept, but I hope the examples below at least
 _motivate_ how these abstractions can be _useful_ in a real setting.
-Oh, and this is a literate haskell file, so you should be able to load it into
-ghci and run the examples like so.
+Oh, and this is a literate haskell file, so you should be able to copy-and-paste
+the text into a file (e.g. HepExample.lhs) and load it into ghci like so.
+(N.B.: you'll need to install the transformers package in addition to the base
+libraries, but I'll let google be your friend for that one).
 
 < $ ghci HEPExample.lhs
 
