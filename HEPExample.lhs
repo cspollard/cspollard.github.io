@@ -10,7 +10,7 @@ _motivate_ how these abstractions can be _useful_ in a real setting.
 Oh, and this is a literate haskell file, so you should be able to load it into
 ghci and run the examples like so.
 
-ghci HEPExample.lhs
+< $ ghci HEPExample.lhs
 
 Let's start with a module delcaration and some imports:
 
@@ -161,7 +161,12 @@ And by black magic all of this already lives in the base haskell libraries.
 > evtSF = Event (Product 1.1, 25.5) (Product 0.93, 54.2)
 
 If that's not 100\% clear, "evtSF" is an "Event" whose electrons and muons have
-some scale factor associated to them.
+some scale factor associated to them: we now have a context of type
+
+< (,) (Product Double)
+
+which translates into a 2-tuple in which the first part is always a
+"Product Double".
 The "Product" type knows how to correctly _combine_ with itself: multiplication!
 "But why is this necessary? Why can't I just use regular old Doubles for my
 scale factors", you ask.
