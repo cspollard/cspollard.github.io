@@ -50,7 +50,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 <p>Here are contained a few toy examples of how powerful abstracting over monads can be in HEP. I'm not going to discuss haskell syntax carefully here: sorry, and I will leave a lot of details (e.g. the idea behind monads) for a future post. What I <em>will</em> recommend now is that you think of any context which is composable as forming a monad. Don't worry: it's not an easy concept, but I hope the examples below at least <em>motivate</em> how these abstractions can be <em>useful</em> in a real setting. Oh, and this is a literate haskell file, so you should be able to copy-and-paste the text into a file (e.g. HepExample.lhs) and load it into ghci like so. (N.B.: you'll need to install the transformers package in addition to the base libraries, but I'll let google be your friend for that one).</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">$</span> ghci HEPExample.lhs</code></pre></div>
-<p>Let's start with a module delcaration and some imports:</p>
+<p>Let's start with a module delcaration and some imports.</p>
 <div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">HEPExample</span> <span class="kw">where</span>
 <span class="ot">&gt;</span> 
 <span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Monad.Trans.Maybe</span>
@@ -61,7 +61,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="ot">&gt;</span> 
 <span class="ot">&gt; evt&#39; ::</span> <span class="dt">Event&#39;</span>
 <span class="ot">&gt;</span> evt&#39; <span class="fu">=</span> <span class="dt">Event&#39;</span> <span class="fl">25.5</span> <span class="fl">52.4</span></code></pre></div>
-<p>Now we have a new type as well as an value inhabiting it called &quot;evt'&quot;: piece of cake. If you could read the future you would know that I call this data type &quot;Event'&quot; as opposed to &quot;Event&quot; because in a few minutes we're going to make everything a <em>heck of a lot</em> fancier.</p>
+<p>Now we have a new type as well as an value inhabiting it called &quot;evt'&quot;: piece of cake. If you could read the future you would know that I call this data type &quot;Event'&quot; (emphasis on the prime) as opposed to &quot;Event&quot; because in a few minutes we're going to make everything a <em>heck of a lot</em> fancier.</p>
 <p>Next let's define a function that takes as input an Event' and calculates an observable: the pT sum of the two leptons in the event.</p>
 <div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt; sumPt&#39; ::</span> <span class="dt">Event&#39;</span> <span class="ot">-&gt;</span> <span class="dt">Double</span>
 <span class="ot">&gt;</span> sumPt&#39; evt <span class="fu">=</span>
