@@ -14,7 +14,7 @@ libraries, but I'll let google be your friend for that one).
 
 < $ ghci HEPExample.lhs
 
-Let's start with a module delcaration and some imports:
+Let's start with a module delcaration and some imports.
 
 > module HEPExample where
 >
@@ -33,8 +33,8 @@ information: an electron pT and a muon pT.
 Now we have a new type as well as an value inhabiting it called "evt'": piece of
 cake.
 If you could read the future you would know that I call this data type "Event'"
-as opposed to "Event" because in a few minutes we're going to make everything a
-_heck of a lot_ fancier.
+(emphasis on the prime) as opposed to "Event" because in a few minutes we're
+going to make everything a _heck of a lot_ fancier.
 
 Next let's define a function that takes as input an Event' and calculates an
 observable: the pT sum of the two leptons in the event.
