@@ -18,7 +18,7 @@ into the haskell REPL, `ghci`, like so.
 
     $ ghci HEPExample.lhs
 
-Any lines beginning with bird tracks (">") can be called from within the REPL.
+Any lines beginning with bird "HEPExample>" can be called from within the REPL.
 (N.B.: you'll need to install the `transformers`, `primitive`, and
 `mwc-probability` packages in addition to the base libraries, but I'll let
 google be your friend for how to do that).
