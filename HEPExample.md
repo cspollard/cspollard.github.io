@@ -8,7 +8,7 @@ to be gained by moving to a more mathematically rigorous representation of
 analysis procedures, even if it's a slightly more abstract one than we usually
 deal with in traditional programming languages.
 (This is exactly what source code is, after all: a representation of a
-mathematical procedure)
+mathematical procedure, and often quite a poor one.)
 
 Don't worry if not everything makes sense immediately: these aren't easy
 concepts to grasp the first time through.
@@ -34,7 +34,7 @@ Let's start with a module declaration and some imports.
 > import           Control.Monad.Primitive
 
 Then let's define an `Event`{.haskell} data type which contains only two pieces
-of information: an electron pT and a muon pT.
+of information: an electron pt and a muon pt.
 
 > data Event' = Event' { elPt' :: Double, muPt' :: Double }
 >
@@ -49,8 +49,8 @@ If you could read the future you would know that I call this data type
 because we'll shortly be making everything a _heck of a lot_ fancier.
 But let's walk before we run, shall we?
 
-Next let's define a function that takes as input an `Event'`{.haskell} and
-calculates an observable: the pT sum of the two leptons in the event.
+Next we define a function that takes as input an `Event'`{.haskell} and
+returns an observable: the pt sum of the two leptons in the event.
 
 > sumPt' :: Event' -> Double
 > sumPt' evt =
@@ -68,10 +68,10 @@ By my calculation that's exactly the answer we expect.
 So far so good?
 I'll assume yes.
 
-Now let's make things interesting: I want my `Event`{.haskell} type to return
-some kind of _context_ around the lepton pTs.
-And by "context" I mean that there is some decoration or container that my pT
-lives in: perhaps there is a list of pTs or it is always accompanied by some
+Now let's make things more interesting: I want my `Event`{.haskell} type to
+return some kind of _context_ around the lepton pts.
+And by "context" I mean that there is some decoration or container that my pt
+lives in: perhaps there is a list of pts or it is always accompanied by some
 additional information.
 Thankfully, we don't have to be specific to start: we can _parameterize_ our
 `Event`{.haskell} type by the context that we will (in the future) be using.
@@ -274,8 +274,8 @@ context, and a very useful one at that.
 > evtProb = Event (normal 25.5 4.3) (normal 54.2 11.9)
 
 The above defines an event that, instead of having particular values for the
-electron and muon pTs, holds probability distributions for each of them.
-In this case the electron (muon) pT is normally distributed around a mean of
+electron and muon pts, holds probability distributions for each of them.
+In this case the electron (muon) pt is normally distributed around a mean of
 25.5 (54.2) and standard deviation of 4.3 (11.9).
 
 (For now we'll not discuss the idea behind the `PrimMonad`{.haskell} type
@@ -314,7 +314,7 @@ Now don't get confused by
 "please sample the following distribution ten times with the system random
 number generator."
 What comes back is, of course, the interesting bit: ten samples of the
-`sumPt`{.haskell} distribution given the distributions of the lepton pTs.
+`sumPt`{.haskell} distribution given the distributions of the lepton pts.
 Pretty slick, huh?
 
 Of course in practice, our event data types and analysis procedures are much
@@ -345,7 +345,7 @@ encodes all of this information: it says you need a composable context
 (`Alternative`{.haskell}); as long as you have these, then you can use this
 function.
 
-I think that's enough for today!
+Whew: I think that's enough for today.
 Hopefully I've given you a taste of what can be achieved with these very
 powerful abstractions that mathematicians have known about for years, but which
 only recently have seen use in much "day-to-day" code.
