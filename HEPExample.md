@@ -342,10 +342,11 @@ then calculates the invariant mass of these objects.
 Any scale factors, systematic variations, or possible failure of cuts can be
 automatically propagated through the code just by using an appropriate
 _context_!
-I want to stress here that the type signature of evtInvM already encodes all of
-this information: it says you need a composable context (`Monad`{.haskell}) that
-supports the possibility of failure (`Alternative`{.haskell}); as long as you
-have that, then you can use this function.
+I want to stress here that the type signature of `evtInvM`{.haskell} already
+encodes all of this information: it says you need a composable context
+(`Monad`{.haskell}) that supports the possibility of failure
+(`Alternative`{.haskell}); as long as you have that, then you can use this
+function.
 
 I think that's enough for today!
 Hopefully I've given you a taste of what can be achieved with these very
