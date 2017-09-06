@@ -34,26 +34,22 @@ how to do that).
 Let's start with a module declaration and some
 imports.
 
-``` {.sourceCode .literate .haskell}
-module HEPExample where
-
-import           Control.Monad.Trans.Maybe
-import           Data.Functor.Identity
-import           Data.Monoid                   (Product (..))
-import           System.Random.MWC.Probability
-import           Control.Monad.Primitive
-```
+> module HEPExample where
+>
+> import           Control.Monad.Trans.Maybe
+> import           Data.Functor.Identity
+> import           Data.Monoid                   (Product (..))
+> import           System.Random.MWC.Probability
+> import           Control.Monad.Primitive
 
 Then let's define an `Event`{.haskell} data type
 which contains only two pieces of information: an
 electron pT and a muon pT.
 
-``` {.sourceCode .literate .haskell}
-data Event' = Event' { elPt' :: Double, muPt' :: Double }
-
-evt' :: Event'
-evt' = Event' 25.5 54.2
-```
+> data Event' = Event' { elPt' :: Double, muPt' :: Double }
+>
+> evt' :: Event'
+> evt' = Event' 25.5 54.2
 
 Great! Now we have a new data type
 (`Event'`{.haskell}) as well as an value
@@ -70,13 +66,11 @@ an `Event'`{.haskell} and calculates an
 observable: the pT sum of the two leptons in the
 event.
 
-``` {.sourceCode .literate .haskell}
-sumPt' :: Event' -> Double
-sumPt' evt =
-  let ept = elPt' evt
-      mpt = muPt' evt
-  in ept + mpt
-```
+> sumPt' :: Event' -> Double
+> sumPt' evt =
+>   let ept = elPt' evt
+>       mpt = muPt' evt
+>   in ept + mpt
 
 Capisce? If you've loaded this file into `ghci`,
 you can check that things work properly:
@@ -99,9 +93,7 @@ specific to start: we can *parameterize* our
 (in the future) be using. Why do now what could be
 done tomorrow?
 
-``` {.sourceCode .literate .haskell}
-data Event m = Event { elPt :: m Double, muPt :: m Double }
-```
+> data Event m = Event { elPt :: m Double, muPt :: m Double }
 
 For you non-procrasinators, don't worry: we'll
 have some examples that are conspicuous in high
@@ -124,10 +116,8 @@ which is nothing more than a wrapper that contains
 a value. We can easily make an `Event`{.haskell}
 with a trivial context:
 
-``` {.sourceCode .literate .haskell}
-evtId :: Event Identity
-evtId = Event (Identity 25.5) (Identity 54.2)
-```
+> evtId :: Event Identity
+> evtId = Event (Identity 25.5) (Identity 54.2)
 
 The discerning reader will realize that this is
 isomorphic to the simple `evt'`{.haskell} we
@@ -154,13 +144,11 @@ word "assignment" very much, but I can't think of
 anything better) and make sure to
 `return`{.haskell} the final value, like so:
 
-``` {.sourceCode .literate .haskell}
-sumPt :: Monad m => Event m -> m Double
-sumPt evt = do
-  ept <- elPt evt    -- monadic assignment
-  mpt <- muPt evt    -- monadic assignment
-  return (ept + mpt) -- return
-```
+> sumPt :: Monad m => Event m -> m Double
+> sumPt evt = do
+>   ept <- elPt evt    -- monadic assignment
+>   mpt <- muPt evt    -- monadic assignment
+>   return (ept + mpt) -- return
 
 Do you see how the `do`{.haskell}-notation makes
 our new, fancy function resemble our original,
@@ -237,15 +225,13 @@ doing.
 ok, let's try defining some `Event`{.haskell}s
 that might be missing some leptons.
 
-``` {.sourceCode .literate .haskell}
-evtElMu, evtElNoMu, evtNoElMu :: Event Maybe
-
-evtElMu = Event (Just 25.5) (Just 54.2) -- both electron and muon identified
-
-evtElNoMu = Event (Just 25.5) Nothing   -- missing a muon
-
-evtNoElMu = Event Nothing (Just 54.2)   -- missing an electron
-```
+> evtElMu, evtElNoMu, evtNoElMu :: Event Maybe
+>
+> evtElMu = Event (Just 25.5) (Just 54.2) -- both electron and muon identified
+>
+> evtElNoMu = Event (Just 25.5) Nothing   -- missing a muon
+>
+> evtNoElMu = Event Nothing (Just 54.2)   -- missing an electron
 
 What's really great about `Maybe`{.haskell} is
 that it is a *composable context*, so we can use
@@ -294,12 +280,10 @@ composable context that we can plug into our
 of this already lives in the haskell `base`
 libraries.
 
-``` {.sourceCode .literate .haskell}
-type SF = Product Double
-
-evtSF :: Event ((,) SF)
-evtSF = Event (Product 1.1, 25.5) (Product 0.93, 54.2)
-```
+> type SF = Product Double
+>
+> evtSF :: Event ((,) SF)
+> evtSF = Event (Product 1.1, 25.5) (Product 0.93, 54.2)
 
 If that's not 100% clear, `evtSF`{.haskell} is an
 `Event`{.haskell} whose electrons and muons have
@@ -348,10 +332,8 @@ me)... It turns out that probability distributions
 form another valid, composable context, and a very
 useful one at that.
 
-``` {.sourceCode .literate .haskell}
-evtProb :: PrimMonad m => Event (Prob m)
-evtProb = Event (normal 25.5 4.3) (normal 54.2 11.9)
-```
+> evtProb :: PrimMonad m => Event (Prob m)
+> evtProb = Event (normal 25.5 4.3) (normal 54.2 11.9)
 
 The above defines an event that, instead of having
 particular values for the electron and muon pTs,
