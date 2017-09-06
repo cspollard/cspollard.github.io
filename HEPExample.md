@@ -309,9 +309,10 @@ One thing we can do _for sure_, though, is sample this distribution:
     HEPExample> withSystemRandom . asGenIO . samples 10 $ sumPt evtProb
     [94.11359301538116,84.77993589158864,92.82674080235154,61.9462895476663,92.13224164142169,88.92614222298857,71.01504548041477,77.92693906507571,109.10381978490473,97.80981038489617]
 
-Now don't get confused by `withSystemRandom . asGenIO . samples 10 $`{.haskell};
-that is simply saying, "please sample the following distribution ten times with
-the system random number generator."
+Now don't get confused by
+"`withSystemRandom . asGenIO . samples 10 $`{.haskell}"; that is simply saying,
+"please sample the following distribution ten times with the system random
+number generator."
 What comes back is, of course, the interesting bit: ten samples of the
 `sumPt`{.haskell} distribution given the distributions of the lepton pTs.
 Pretty slick, huh?
@@ -345,7 +346,7 @@ _context_!
 I want to stress here that the type signature of `evtInvM`{.haskell} already
 encodes all of this information: it says you need a composable context
 (`Monad`{.haskell}) that supports the possibility of failure
-(`Alternative`{.haskell}); as long as you have that, then you can use this
+(`Alternative`{.haskell}); as long as you have these, then you can use this
 function.
 
 I think that's enough for today!
