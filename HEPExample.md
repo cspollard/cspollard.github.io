@@ -345,7 +345,8 @@ encodes all of this information: it says you need a composable context
 (`Alternative`{.haskell}); as long as you have these, then you can use this
 function.
 
-Whew: I think that's enough for today.
+Whew.
+I think that's enough for today.
 Hopefully I've given you a taste of what can be achieved with these very
 powerful abstractions that mathematicians have known about for years, but which
 only recently have seen use in much "day-to-day" code.
