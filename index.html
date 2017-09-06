@@ -56,11 +56,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Let's start with a module declaration and some imports.</p>
 <div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">module</span> <span class="dt">HEPExample</span> <span class="kw">where</span>
 <span class="ot">&gt;</span> 
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Applicative</span>           (<span class="dt">Alternative</span>(..))
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Monad</span>                 (guard)
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Monad.Primitive</span>
 <span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Monad.Trans.Maybe</span>
 <span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Data.Functor.Identity</span>
 <span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Data.Monoid</span>                   (<span class="dt">Product</span> (..))
-<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">System.Random.MWC.Probability</span>
-<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">Control.Monad.Primitive</span></code></pre></div>
+<span class="ot">&gt;</span> <span class="kw">import           </span><span class="dt">System.Random.MWC.Probability</span></code></pre></div>
 <p>Then let's define an <code class="sourceCode haskell"><span class="dt">Event</span></code> data type which contains only two pieces of information: an electron pt and a muon pt.</p>
 <div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Event&#39;</span> <span class="fu">=</span> <span class="dt">Event&#39;</span> {<span class="ot"> elPt&#39; ::</span> <span class="dt">Double</span>,<span class="ot"> muPt&#39; ::</span> <span class="dt">Double</span> }
 <span class="ot">&gt;</span> 
@@ -150,19 +152,29 @@ sumPt evtProb :: PrimMonad m =&gt; Prob m Double</code></pre>
 [94.11359301538116,84.77993589158864,92.82674080235154,61.9462895476663,92.13224164142169,88.92614222298857,71.01504548041477,77.92693906507571,109.10381978490473,97.80981038489617]</code></pre>
 <p>Now don't get confused by &quot;<code class="sourceCode haskell">withSystemRandom <span class="fu">.</span> asGenIO <span class="fu">.</span> samples <span class="dv">10</span> <span class="fu">$</span></code>&quot;; that is simply saying, &quot;please sample the following distribution ten times with the system random number generator.&quot; What comes back is, of course, the interesting bit: ten samples of the <code class="sourceCode haskell">sumPt</code> distribution given the distributions of the lepton pts. Pretty slick, huh?</p>
 <p>Of course in practice, our event data types and analysis procedures are much more complicated than <code class="sourceCode haskell"><span class="dt">Event</span></code> and <code class="sourceCode haskell">sumPt</code>. Thankfully this is in no way a problem.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">evtInvM ::</span> (<span class="dt">Monad</span> m, <span class="dt">Alternative</span> m) <span class="ot">=&gt;</span> <span class="dt">Event</span> m <span class="ot">-&gt;</span> m <span class="dt">Double</span>
-evtInvM evt <span class="fu">=</span> <span class="kw">do</span>
-  es <span class="ot">&lt;-</span> electrons evt    <span class="co">-- get electrons</span>
-  guard <span class="fu">$</span> length es <span class="fu">==</span> <span class="dv">1</span> <span class="co">-- require exactly 1 electron</span>
-
-  ms <span class="ot">&lt;-</span> muons evt        <span class="co">-- get muons</span>
-  guard <span class="fu">$</span> length ms <span class="fu">==</span> <span class="dv">1</span> <span class="co">-- require exactly 1 muon</span>
-
-  js <span class="ot">&lt;-</span> jets evt         <span class="co">-- get jets</span>
-  guard <span class="fu">$</span> length js <span class="fu">==</span> <span class="dv">2</span> <span class="co">-- require exactly 2 jets</span>
-
-  return <span class="fu">.</span> invM <span class="fu">.</span> mconcat <span class="fu">$</span> js <span class="fu">++</span> es <span class="fu">++</span> ms</code></pre></div>
-<p>The above code checks for exactly one electron, one muon, two jets, then calculates the invariant mass of these objects. Any scale factors, systematic variations, or possible failure of cuts can be automatically propagated through the code just by using an appropriate <em>context</em>! I want to stress here that the type signature of <code class="sourceCode haskell">evtInvM</code> already encodes all of this information: it says you need a composable context (<code class="sourceCode haskell"><span class="dt">Monad</span></code>) that supports the possibility of failure (<code class="sourceCode haskell"><span class="dt">Alternative</span></code>); as long as you have these, then you can use this function.</p>
+<div class="sourceCode"><pre class="sourceCode literate literatehaskell"><code class="sourceCode literatehaskell"><span class="ot">&gt;</span> <span class="kw">data</span> <span class="dt">Event&#39;&#39;</span> m <span class="fu">=</span>
+<span class="ot">&gt;</span>   <span class="dt">Event&#39;&#39;</span>
+<span class="ot">&gt;</span>     {<span class="ot"> ePts ::</span> m [<span class="dt">Double</span>]
+<span class="ot">&gt;</span>     ,<span class="ot"> mPts ::</span> m [<span class="dt">Double</span>]
+<span class="ot">&gt;</span>     ,<span class="ot"> jPts ::</span> m [<span class="dt">Double</span>]
+<span class="ot">&gt;</span>     }
+<span class="ot">&gt;</span> 
+<span class="ot">&gt; sumPt&#39;&#39; ::</span> (<span class="dt">Monad</span> m, <span class="dt">Alternative</span> m) <span class="ot">=&gt;</span> <span class="dt">Event&#39;&#39;</span> m <span class="ot">-&gt;</span> m <span class="dt">Double</span>
+<span class="ot">&gt;</span> sumPt&#39;&#39; evt <span class="fu">=</span> <span class="kw">do</span>
+<span class="ot">&gt;</span>   epts <span class="ot">&lt;-</span> ePts evt         <span class="co">-- get electrons</span>
+<span class="ot">&gt;</span>   guard <span class="fu">$</span> length epts <span class="fu">==</span> <span class="dv">1</span> <span class="co">-- require exactly 1 electron</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span>   mpts <span class="ot">&lt;-</span> mPts evt         <span class="co">-- get muons</span>
+<span class="ot">&gt;</span>   guard <span class="fu">$</span> length mpts <span class="fu">==</span> <span class="dv">1</span> <span class="co">-- require exactly 1 muon</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span>   jpts <span class="ot">&lt;-</span> jPts evt         <span class="co">-- get jets</span>
+<span class="ot">&gt;</span>   guard <span class="fu">$</span> length jpts <span class="fu">==</span> <span class="dv">2</span> <span class="co">-- require exactly 2 jets</span>
+<span class="ot">&gt;</span> 
+<span class="ot">&gt;</span>   return <span class="fu">.</span> sum <span class="fu">$</span> jpts <span class="fu">++</span> epts <span class="fu">++</span> mpts</code></pre></div>
+<p>The above code checks for exactly one electron, one muon, two jets, then calculates the pt sum of these objects. Any scale factors, systematic variations, or possible failure of cuts can be automatically propagated through the code just by using an appropriate <em>context</em>! I want to stress here that the type signature of <code class="sourceCode haskell">evtInvM</code> already encodes all of this information: it says you need a composable context (<code class="sourceCode haskell"><span class="dt">Monad</span></code>) that supports the possibility of failure (<code class="sourceCode haskell"><span class="dt">Alternative</span></code>); as long as you have these, then you can use this function. We can give it a try on a simple context (<code class="sourceCode haskell"><span class="dt">Maybe</span></code>) like so:</p>
+<pre><code>HEPExample&gt; sumPt&#39;&#39; $ Event&#39;&#39; (Just [28]) (Just [50]) (Just [10, 15])     -- should pass cuts
+HEPExample&gt; sumPt&#39;&#39; $ Event&#39;&#39; (Just [28]) Nothing (Just [10, 15])         -- missing a muon
+HEPExample&gt; sumPt&#39;&#39; $ Event&#39;&#39; (Just [28]) (Just [50]) (Just [10, 15, 20]) -- too many jets!</code></pre>
 <p>Whew. I think that's enough for today. Hopefully I've given you a taste of what can be achieved with these very powerful abstractions that mathematicians have known about for years, but which only recently have seen use in much &quot;day-to-day&quot; code. Indeed, many more common idioms fit in the &quot;composable context&quot; box, including another ubiquitous one in HEP: systematic variations of values. In fact, so-called &quot;stacks&quot; of these contexts quite often follow the required rules, so you can construct a combined context that handles scale factors and the possibility of failure at the same time. And really this is just the tip of the iceberg: there are many more interesting, <em>rigorous</em> mathematical concepts at our disposal that already exist and are just waiting for us to use them in analyses, and by using these concepts we can make our analysis procedures easier to understand, easier to refactor, and generally more bug-free!</p>
 </body>
 </html>

@@ -27,11 +27,13 @@ Let's start with a module declaration and some imports.
 
 > module HEPExample where
 >
+> import           Control.Applicative           (Alternative(..))
+> import           Control.Monad                 (guard)
+> import           Control.Monad.Primitive
 > import           Control.Monad.Trans.Maybe
 > import           Data.Functor.Identity
 > import           Data.Monoid                   (Product (..))
 > import           System.Random.MWC.Probability
-> import           Control.Monad.Primitive
 
 Then let's define an `Event`{.haskell} data type which contains only two pieces
 of information: an electron pt and a muon pt.
@@ -321,21 +323,28 @@ Of course in practice, our event data types and analysis procedures are much
 more complicated than `Event`{.haskell} and `sumPt`{.haskell}.
 Thankfully this is in no way a problem.
 
-< evtInvM :: (Monad m, Alternative m) => Event m -> m Double
-< evtInvM evt = do
-<   es <- electrons evt    -- get electrons
-<   guard $ length es == 1 -- require exactly 1 electron
-<
-<   ms <- muons evt        -- get muons
-<   guard $ length ms == 1 -- require exactly 1 muon
-<
-<   js <- jets evt         -- get jets
-<   guard $ length js == 2 -- require exactly 2 jets
-<
-<   return . invM . mconcat $ js ++ es ++ ms
+> data Event'' m =
+>   Event''
+>     { ePts :: m [Double]
+>     , mPts :: m [Double]
+>     , jPts :: m [Double]
+>     }
+>
+> sumPt'' :: (Monad m, Alternative m) => Event'' m -> m Double
+> sumPt'' evt = do
+>   epts <- ePts evt         -- get electrons
+>   guard $ length epts == 1 -- require exactly 1 electron
+>
+>   mpts <- mPts evt         -- get muons
+>   guard $ length mpts == 1 -- require exactly 1 muon
+>
+>   jpts <- jPts evt         -- get jets
+>   guard $ length jpts == 2 -- require exactly 2 jets
+>
+>   return . sum $ jpts ++ epts ++ mpts
 
 The above code checks for exactly one electron, one muon, two jets,
-then calculates the invariant mass of these objects.
+then calculates the pt sum of these objects.
 Any scale factors, systematic variations, or possible failure of cuts can be
 automatically propagated through the code just by using an appropriate
 _context_!
@@ -344,6 +353,11 @@ encodes all of this information: it says you need a composable context
 (`Monad`{.haskell}) that supports the possibility of failure
 (`Alternative`{.haskell}); as long as you have these, then you can use this
 function.
+We can give it a try on a simple context (`Maybe`{.haskell}) like so:
+
+    HEPExample> sumPt'' $ Event'' (Just [28]) (Just [50]) (Just [10, 15])     -- should pass cuts
+    HEPExample> sumPt'' $ Event'' (Just [28]) Nothing (Just [10, 15])         -- missing a muon
+    HEPExample> sumPt'' $ Event'' (Just [28]) (Just [50]) (Just [10, 15, 20]) -- too many jets!
 
 Whew.
 I think that's enough for today.
