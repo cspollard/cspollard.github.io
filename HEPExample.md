@@ -332,11 +332,7 @@ Thankfully this is in no way a problem.
 <   js <- jets evt         -- get jets
 <   guard $ length js == 2 -- require exactly 2 jets
 <
-<   let mass =
-<         invM . mconcat
-<         $ (fourMom <$> js) ++ (fourMom <$> es) ++ (fourMom <$> ms)
-<
-<   return mass
+<   return . invM . mconcat $ js ++ es ++ ms
 
 The above code checks for exactly one electron, one muon, two jets,
 then calculates the invariant mass of these objects.
