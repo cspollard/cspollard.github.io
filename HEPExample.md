@@ -135,7 +135,7 @@ Sarcasm aside, what is really going on here...?
 
 Here's one way to think about it: each line in the `do`{.haskell} block yields
 both a value and a context, but only the _value_ is bound to a variable (e.g.
-`ept`{.haskell): we don't have a handle on the contexts at all.
+`ept`{.haskell}): we don't have a handle on the contexts at all.
 But the only way this works is if we have a _context_ that is _composable_
 line-by-line.
 Well, that's exactly what the `Monad`{.haskell} type constraint is telling us
