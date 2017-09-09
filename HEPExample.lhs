@@ -3,7 +3,7 @@ Putting things into context
 
 Here are contained a few examples of how powerful abstracting over contexts can
 be in real-life situations.
-(Where in this case "real-life" means high energy physics)
+(Where in this case "real-life" means high energy physics. To each his own...)
 I'll be using the haskell programming language in the examples, but I'm not
 going to discuss haskell syntax carefully here, and I will leave out many
 details (e.g. the rigorous definition of `Monad`{.haskell}s).
@@ -16,16 +16,15 @@ often a rather difficult one to understand.
 Don't worry if not everything contained here makes sense immediately; these
 aren't easy concepts to grasp the first time through.
 
-This file is written in literate haskell, so you should be able to
-copy-and-paste the text into a local file (e.g. `HEPExample.lhs`) and load it
-into the haskell REPL, `ghci`, like so.
+This post is literate haskell, so you can copy-and-paste the text into a local
+file (e.g. `HEPExample.lhs`) and load it into the haskell REPL, `ghci`, like so:
 
 < $ ghci HEPExample.lhs
 
-Any lines beginning with "HEPExample>" can be called from within the REPL.
 (N.B. you'll need to install the `primitive` and `mwc-probability` packages in
 addition to the base libraries, but I'll let google be your friend for
 instructions).
+Any lines beginning with "HEPExample>" can be called from within the REPL.
 
 Let's start with a module declaration and some imports. (Don't dwell on them if
 you're unfamiliar with haskell.)
@@ -49,16 +48,19 @@ of information, an electron pt and a muon pt.
 
 Now we have a new data type (`Event'`{.haskell}) with one constructor (also
 `Event'`{.haskell}) as well as a value inhabiting it (`evt'`{.haskell}).
-In this example the electron and muon pts are 25.5 and 54.2, respectively.
-(You'll have to forgive me for breaking that fundamental rule of always
-specifying units)
+In this example the electron and muon pts are 25.5 and 54.2, respectively, in
+some arbitrary units of momentum.
 If you could read the future you would know that I call this data type
 `Event'`{.haskell} (emphasis on the prime) as opposed to `Event`{.haskell}
-because we'll shortly be making it a lot _fancier_.
+because we'll shortly be making `Event`{.haskell}, and it's going to be a lot
+_fancier_.
 But let's walk before we run, shall we?
 
-Next we define a function that takes as input an `Event'`{.haskell} and
-returns an observable, the pt sum of the two leptons in the event.
+Let's define an observable for our event.
+An observable of type `a`{.haskell} is a map from `Event'`{.haskell} to
+`a`{.haskell}.
+For instance, here is a function calculating the pt sum of the two leptons in
+the event.
 
 > sumPt' :: Event' -> Double
 > sumPt' evt =
@@ -66,12 +68,20 @@ returns an observable, the pt sum of the two leptons in the event.
 >       mpt = muPt' evt
 >   in ept + mpt
 
+Of course the functions `elPt'`{.haskell} and `muPt'`{.haskell} are observables
+just as `sumPt'`{.haskell} is.
 If you've loaded this file into `ghci`, you can check that things work properly:
+
+    HEPExample> elPt' evt'
+    25.5
+
+    HEPExample> muPt' evt'
+    54.2
 
     HEPExample> sumPt' evt'
     79.7
 
-By my calculation that's exactly the answer we expect.
+By my calculation these are exactly the answers we expect.
 So far so good.
 
 Now let's make things more interesting: I want my `Event`{.haskell} type to
@@ -117,10 +127,10 @@ One common way to _lift_ a "regular" function like `sumPt'`{.haskell} to a
 "contextified" function is to use haskell's `do`{.haskell}-notation.
 `do`{.haskell}-notation is really just syntactic sugar, but it's well-motivated
 by some quite nice (if quite abstract) mathematics.
-One should replace `let`{.haskell} bindings by "assignments" (I put this in
-quotes because I don't like the word "assignment" very much but can't think of
-anything better), which are denoted by `<-`{.haskell}, and make sure to
-`return`{.haskell} the final value, like so.
+One should replace `let`{.haskell} bindings by "assignments", which are denoted
+by `<-`{.haskell}, and make sure to `return`{.haskell} the final value.
+(I put "assignment" in quotes because I don't like the word very much but can't
+think of anything better)
 
 > sumPt :: Monad m => Event m -> m Double
 > sumPt evt = do
@@ -134,10 +144,16 @@ doing can be read easily straight from the code!
 
 Try it:
 
+    HEPExample> elPt evtId
+    Identity 25.5
+
+    HEPExample> muPt evtId
+    Identity 54.2
+
     HEPExample> sumPt evtId
     Identity 79.7
 
-That yields the same answer that we got earlier, just in the
+That yields the same answers that we got earlier, just in the
 `Identity`{.haskell} context, which is good because we know we didn't add or
 remove any information at all.
 Great, we successfully did nothing!
@@ -148,15 +164,15 @@ Here's one way to think about our lifted function: each line in the
 be bound to a variable (e.g. `ept`{.haskell}, which has the type
 `Double`{.haskell}) through assignment.
 We don't have a handle on the contexts at all!
-The only way this works is if we have a context that is _composable_, i.e. there
-is one and _only_ one well-defined way to combine the contexts from two
-consecutive lines.
+The only way this can possibly work is if we have a context that is
+_composable_, i.e. there is one and _only_ one well-defined way to combine the
+contexts from two consecutive lines.
 And this is exactly what happens: contexts are composed line-by-line, so
 when we `return`{.haskell} our new observable, it comes with the combined
 context of all previous lines.
 
-In fact the `Monad`{.haskell} type constraint is telling us exactly that in the
-type signature of `sumPt`{.haskell}.
+In fact the `Monad`{.haskell} type constraint in the type signature of
+`sumPt`{.haskell} is telling us exactly that.
 A `Monad`{.haskell} in informal terms is a context that composes, following some
 "obvious" laws that we'll leave for another day.
 The type declaration of our function says that it works with _any_ context that
@@ -194,16 +210,16 @@ If we have a value `x`{.haskell}, then the value-with-context will be
 
 You might hear that `Nothing`{.haskell} is similar to a `NULL` pointer in
 C++ or `None` in python, but there is an important difference:
-`Nothing`{.haskell} always has a concrete type `Maybe a`{.haskell}, where
+`Nothing`{.haskell} always has a well-defined type `Maybe a`{.haskell}, where
 `a`{.haskell} is a type parameter.
-In other words, `Nothing`{.haskell} of type `Maybe Int`{.haskell} is _distinct
+For instance, `Nothing`{.haskell} of type `Maybe Int`{.haskell} is _distinct
 from_ `Nothing`{.haskell} of type `Maybe Double`{.haskell}.
-`NULL` and `None` can be compared to _any_ pointer or object, respectively,
-regardless of their types; `Nothing`{.haskell} cannot.
+In contrast, `NULL` and `None` can be used in place of _any_ kind of pointer or
+object, respectively, regardless of their types; `Nothing`{.haskell} cannot.
 This might seem tedious at first, but it allows us (and the compiler) to more
 clearly reason about the results of a computation.
 
-One use-case of `Maybe`{.haskell} is as the result of some cut: if, during the
+`Maybe`{.haskell} can represent the result of a set of cuts: if, during the
 computation of an observable `x`{.haskell} of type `a`{.haskell}, some criterion
 was not met, then we'll get `Nothing`{.haskell} back; otherwise we'll get
 `Just x`{.haskell}.
@@ -223,7 +239,7 @@ Well, if we try to combine two `Just`{.haskell}s, then we get yet another
 `Just`{.haskell}; if there are any `Nothing`{.haskell}s involoved, the
 combination always yields another `Nothing`{.haskell}.
 Translating back to "cut" analagy: as soon as any cut fails, the whole
-computation ends in failure, but if every fut passes, then we get a value back.
+computation ends in failure, but if every cut passes, then we get a value back.
 
 Try it out:
 
@@ -244,8 +260,8 @@ well... we can't do the calculation, so we get `Nothing`{.haskell} back.
 The neat thing here is that we don't have to litter our code with
 `if`{.haskell} statements checking that everything we need is there (look back
 at the definition of `sumPt`{.haskell} and you will find no mention of cuts!);
-we just define the observable and the relevant requirements, and if at any point
-some cut fails, `Nothing`{.haskell} will immediately be returned.
+we just define the observable and the relevant inputs, and if at any point some
+cut fails, `Nothing`{.haskell} will immediately be returned.
 
 Shall we try another context?
 Let's take on "scale factors".
@@ -279,7 +295,7 @@ multiplication!
 Because the real numbers have many ways of combining with each another
 (addition, multiplication, etc.) we need to be sure that when we combine them,
 they multiply and not one of those many other things; as soon as we use the
-`Product`{.haskell} type our intentions become clear.
+`Product`{.haskell} newtype our intentions become clear.
 
 Let's try this out.
 
@@ -315,13 +331,13 @@ The above defines an event `evtProb`{.haskell} that, instead of having
 particular values for the electron and muon pts, holds probability distributions
 for each of them.
 In this case the electron (muon) pt is normally distributed around a mean of
-25.5 (54.2) and standard deviation of 4.3 (11.9).
+25.5 (54.2) with standard deviation 4.3 (11.9).
 
 (For now we'll not discuss the idea behind the `PrimMonad`{.haskell} type
 class; just trust me when I say that the `Prob m a`{.haskell} type represents
-probability densities as a function of values of type `a`{.haskell}. So
-`Prob m Int`{.haskell} means each `Int`{.haskell} has a probability assigned to
-it.)
+probability densities for values of type `a`{.haskell}.
+So `Prob m Int`{.haskell} means each `Int`{.haskell} has a probability assigned
+to it.)
 
 ok, let's give this a whirl:
 
@@ -340,7 +356,7 @@ Well, to answer that question, let's look at the type of
     sumPt evtProb :: PrimMonad m => Prob m Double
 
 We're getting back a probability distribution over all possible
-`Double`{.haskell}s, which is what we want...but how does one print such a
+`Double`{.haskell}s, which is what we want... but how does one print such a
 thing?
 That's a great question, and one which apparently the compiler can't answer!
 One thing we can do, even if we can't print it, is sample it:
