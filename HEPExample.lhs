@@ -1,27 +1,31 @@
+Putting things into context
+===========================
+
 Here are contained a few toy examples of how powerful abstracting over contexts
 can be in real-life situations.
 Well, at least as "real-life" as high-energy physics is.
-I'm not going to discuss haskell syntax carefully here, and I will leave out
-many details (e.g. the rigorous definition of `Monad`{.haskell}s).
+I'll be using the haskell programming language in the examples, but I'm not
+going to discuss haskell syntax carefully here, and I will leave out many
+details (e.g. the rigorous definition of `Monad`{.haskell}s).
 All the same, this tutorial will hopefully convince you that there is something
 to be gained by moving to a more mathematically rigorous representation of
-analysis procedures, even if it's a slightly more abstract one than we usually
-deal with in traditional programming languages.
-(This is exactly what source code is, after all: a representation of a
-mathematical procedure, and often quite a poor one.)
+analysis procedures, albeit a slightly more abstract one than we usually employ
+in traditional programming languages.
+Source code is, after all, a representation of a mathematical procedure, and
+often a rather difficult one to understand.
+But seriously, don't worry if not everything contained here makes sense
+immediately; these aren't easy concepts to grasp the first time through.
 
-Don't worry if not everything makes sense immediately: these aren't easy
-concepts to grasp the first time through.
 This file is written in literate haskell, so you should be able to
 copy-and-paste the text into a local file (e.g. `HEPExample.lhs`) and load it
 into the haskell REPL, `ghci`, like so.
 
-    $ ghci HEPExample.lhs
+< $ ghci HEPExample.lhs
 
-Any lines beginning with bird "HEPExample>" can be called from within the REPL.
-(N.B.: you'll need to install the `transformers`, `primitive`, and
-`mwc-probability` packages in addition to the base libraries, but I'll let
-google be your friend for how to do that).
+Any lines beginning with "HEPExample>" can be called from within the REPL.
+(N.B. you'll need to install the `primitive` and `mwc-probability` packages in
+addition to the base libraries, but I'll let google be your friend for
+instructions).
 
 Let's start with a module declaration and some imports.
 
@@ -30,29 +34,27 @@ Let's start with a module declaration and some imports.
 > import           Control.Applicative           (Alternative(..))
 > import           Control.Monad                 (guard)
 > import           Control.Monad.Primitive
-> import           Control.Monad.Trans.Maybe
 > import           Data.Functor.Identity
 > import           Data.Monoid                   (Product (..))
 > import           System.Random.MWC.Probability
 
-Then let's define an `Event`{.haskell} data type which contains only two pieces
-of information: an electron pt and a muon pt.
+Then let's define an `Event'`{.haskell} data type which contains only two pieces
+of information, an electron pt and a muon pt.
 
 > data Event' = Event' { elPt' :: Double, muPt' :: Double }
 >
 > evt' :: Event'
 > evt' = Event' 25.5 54.2
 
-Great!
-Now we have a new data type (`Event'`{.haskell}) as well as an value inhabiting
-it called `evt'`{.haskell}; hopefully this is straightforward so far.
+Now we have a new data type (`Event'`{.haskell}) with one constructor (also
+`Event'`{.haskell}) as well as a value inhabiting it called `evt'`{.haskell}.
 If you could read the future you would know that I call this data type
 `Event'`{.haskell} (emphasis on the prime) as opposed to `Event`{.haskell}
-because we'll shortly be making everything a _heck of a lot_ fancier.
+because we'll shortly be making it a _lot_ fancier.
 But let's walk before we run, shall we?
 
 Next we define a function that takes as input an `Event'`{.haskell} and
-returns an observable: the pt sum of the two leptons in the event.
+returns an observable, the pt sum of the two leptons in the event.
 
 > sumPt' :: Event' -> Double
 > sumPt' evt =
@@ -60,71 +62,70 @@ returns an observable: the pt sum of the two leptons in the event.
 >       mpt = muPt' evt
 >   in ept + mpt
 
-Capisce?
 If you've loaded this file into `ghci`, you can check that things work properly:
 
     HEPExample> sumPt' evt'
     77.9
 
 By my calculation that's exactly the answer we expect.
-So far so good?
-I'll assume yes.
+So far so good.
 
 Now let's make things more interesting: I want my `Event`{.haskell} type to
 return some kind of _context_ around the lepton pts.
-And by "context" I mean that there is some decoration or container that my pt
-lives in: perhaps there is a list of pts or it is always accompanied by some
-additional information.
+By "context" I mean that there is some decoration or container that my pt lives
+in; perhaps there is a list of pts rather than just one, or the pt is always
+accompanied by some additional information.
 Thankfully, we don't have to be specific to start: we can _parameterize_ our
 `Event`{.haskell} type by the context that we will (in the future) be using.
 Why do now what could be done tomorrow?
 
 > data Event m = Event { elPt :: m Double, muPt :: m Double }
 
-For you non-procrasinators, don't worry: we'll have some examples that are
-conspicuous in high energy physics soon.
-
-ok, so at this point let's think about what kind of thing `m`{.haskell} must be:
+ok, so at this point let's think about what kind of thing `m`{.haskell} must be.
 `m`{.haskell} actually takes `Double`{.haskell} as an _argument_, so it looks
 like it could be a decoration or container around `Double`{.haskell}, i.e. a
 context in which the `Double`{.haskell}s live.
-Let's do something _silly_ (and yet surprisingly powerful) to give ourselves a
-concrete example: let's use a trivial context, a container that just holds onto
-the original value and does nothing else.
+(There is some similarity between haskell type parameters and template
+parameters in the `C++` STL if that helps you understand what we're doing here,
+but just remember that there are important differences that we won't go into.)
+
+Let's do something _silly_ to give ourselves a concrete example: let's use a
+trivial context, a container that just holds onto the original value and does
+nothing else.
 In haskell this is called the `Identity`{.haskell} type, and it has only one
 constructor, also called `Identity`{.haskell}, which is nothing more than a
-wrapper that contains a value.
+wrapper that contains one value.
 We can easily make an `Event`{.haskell} with a trivial context:
 
 > evtId :: Event Identity
 > evtId = Event (Identity 25.5) (Identity 54.2)
 
-The discerning reader will realize that this is isomorphic to the simple
-`evt'`{.haskell} we originally defined above: there's no new information added
+The discerning reader will realize that this is isomorphic to the
+`evt'`{.haskell} we originally defined above; there's no new information added
 or removed by the `Identity`{.haskell} constructors.
 To the discerning reader I say, "Trust me: this is a baby step, but a baby step
 in the right direction!"
 
-So far we've (trivially) complicated our `Event'`{.haskell} type; let's go
-further and complicate the `sumPt'`{.haskell} function.
+So far we've (trivially) complicated our original `Event'`{.haskell} type; let's
+upgrade the `sumPt'`{.haskell} function so that it can use our new kind of
+event.
 One common way to _lift_ a "regular" function like `sumPt'`{.haskell} to a
 "contextified" function is to use haskell's `do`{.haskell}-notation.
-In the end this is really just syntactic sugar, but like many things in the
-haskell world, it's well-motivated by some quite nice (if quite abstract)
-mathematics.
-One rule of thumb to perform this function _lifting_ is to replace
-`let`{.haskell} bindings by "monadic assignments" (I put this in quotes because
-I don't like the word "assignment" very much, but I can't think of anything
-better) and make sure to `return`{.haskell} the final value, like so:
+In the end this is really just syntactic sugar, but it's well-motivated by some
+quite nice (if quite abstract) mathematics.
+One easy way to perform this function lifting is to replace `let`{.haskell}
+bindings by "assignments" (I put this in quotes because I don't like the word
+"assignment" very much but can't think of anything better) and make sure to
+`return`{.haskell} the final value, like so.
 
 > sumPt :: Monad m => Event m -> m Double
 > sumPt evt = do
->   ept <- elPt evt    -- monadic assignment
->   mpt <- muPt evt    -- monadic assignment
+>   ept <- elPt evt    -- assignment
+>   mpt <- muPt evt    -- assignment
 >   return (ept + mpt) -- return
 
-Do you see how the `do`{.haskell}-notation makes our new, fancy function
-resemble our original, simple function quite closely?
+You'll notice that the `do`{.haskell}-notation makes our new, fancy function
+resemble our original, simple function quite closely.
 Try it:
 
     HEPExample> sumPt evtId
@@ -133,51 +134,71 @@ Try it:
 That yields (effectively) the same answer that we got earlier, which is good
 because we know we didn't add or remove any information at all.
 Great, we successfully did nothing!
-Sarcasm aside, what is really going on here...?
+Sarcasm aside, let's dig into what is really going on.
 
-Here's one way to think about it: each line in the `do`{.haskell} block yields
-both a value and a context, but only the _value_ is bound to a variable (e.g.
-`ept`{.haskell}): we don't have a handle on the contexts at all.
-But the only way this works is if we have a _context_ that is _composable_
-line-by-line.
-Well, that's exactly what the `Monad`{.haskell} type constraint is telling us
-in the type signature of `sumPt`{.haskell}: a `Monad`{.haskell} in plain terms
-is a context that composes (along with some "obvious" laws that we'll leave for
-a rainy day).
-With this one function we can use _any_ context that follows the
-`Monad`{.haskell} laws.
+Here's one way to think about our lifted function: each "assignment" in the
+`do`{.haskell} block yields both a value and a context, but only the _value_ is
+bound to a variable (e.g. `ept`{.haskell}, which has the type
+`Double`{.haskell}): we don't have a handle on the contexts at all.
+The only way this works is if we have a context that is _composable_, i.e. there
+is one (and _only_ one) well-defined way to take the contexts from two separate
+assignments and combine them.
+When we `return`{.haskell} our new observable, it comes with the combined
+context of all previous lines.
+
+It turns out that the `Monad`{.haskell} type constraint is telling us exactly
+that in the type signature of `sumPt`{.haskell}.
+A `Monad`{.haskell} in plain (non-rigorous) terms is a context that composes,
+following some "obvious" laws that we'll leave for another day.
+The type declaration of our function says that it works with _any_ context that
+adheres to the `Monad`{.haskell} laws.
 
 What's especially clever about this setup is that we've entirely _abstracted
-away_ the type of the context.
+away_ the context itself.
 In other words, we no longer can perform any actions in our function that are
 dependent on a particular context `m`{.haskell}; we can only perform actions
 that _any_ composable context can handle.
 How is this powerful?
-Well, it means that we have to tell the compiler how each particular context
+Well, it means that we have to prove (in advance) how each particular context
 conforms to the `Monad`{.haskell} type class _exactly once_; from there we can
-pass our context into any suitable function and the compiler _does the
-composition for us_: there's really no way for us to mess up the composing
-because we aren't handling it at all.
+pass our context into any suitable function and the composition take place
+automatically.
+Put another way, as long as the `Monad`{.haskell} instance is correctly
+implemented, abstract `Monad`{.haskell} functions should be bug-free.
 And you'd be surprised how many contexts meet these requirements and can
 therefore be fed into this single function!
 
-For example, let's think about the case that perhaps we're missing an electron
-or muon from our `Event`{.haskell}; maybe we failed to reconstruct one of them,
-or there weren't even any candidates at all.
-This "perhaps we have something, perhaps not" kind of data is generally encoded
-by the `Maybe`{.haskell} type in haskell.
-It has two constructors: `Just`{.haskell} and `Nothing`{.haskell}.
+In the trivial case we tried earlier, the `Identity`{.haskell} context contains
+no additional information, so the composition of two `Identity`{.haskell}s is
+just another `Identity`{.haskell}.
+For a more complex example, let's think about what happens if perhaps we're
+missing an electron or muon from our `Event`{.haskell}; for instance, maybe we
+failed to reconstruct one of them.
+This "perhaps we have something, perhaps not" kind of data is usually encoded
+by the `Maybe`{.haskell} type; it has two constructors: `Just`{.haskell} and
+`Nothing`{.haskell}.
 If we have a value x, then the value-with-context will be `Just x`{.haskell};
 if the value is missing, then we have `Nothing`{.haskell}.
+
 Some people say that you can think of `Nothing`{.haskell} as similar to a
-`NULL` pointer in C++ or `None` in python, but I disagree: `Nothing`{.haskell}
-always has a concrete type `Maybe a`{.haskell}, where `a`{.haskell} is a type
-parameter.
-So `Nothing`{.haskell} of type `Maybe Int`{.haskell} is _distinct from_
-`Nothing`{.haskell} of type `Maybe Double`{.haskell}; `NULL` and `None` can be
-compared to _any_ pointer or object, respectively, regardless of their types.
+`NULL` pointer in C++ or `None` in python, there is an important difference:
+`Nothing`{.haskell} always has a concrete type `Maybe a`{.haskell}, where
+`a`{.haskell} is a type parameter.
+In other words, `Nothing`{.haskell} of type `Maybe Int`{.haskell} is _distinct
+from_ `Nothing`{.haskell} of type `Maybe Double`{.haskell}.
+`NULL` and `None` can be compared to _any_ pointer or object, respectively,
+regardless of their types; `Nothing`{.haskell} cannot.
 This might seem tedious at first, but it allows us (and the compiler) to more
-clearly reason about what a computation is doing.
+clearly reason about the results of a computation.
+
+One way to think of the `Maybe a`{.haskell} is as the result of some cut; if,
+during the computation of an observable `x`{.haskell} of type `a`{.haskell},
+some criterion was not met, then we'll get `Nothing`{.haskell} back; otherwise
+we'll get `Just x`{.haskell}.
+The neat thing here is that we don't have to litter our code with
+`if`{.haskell} statements checking that everything we need is there; we just
+define the observable and the relevant requirements, and if at any point some
+cut fails, `Nothing`{.haskell} will immediately be returned.
 
 ok, let's try defining some `Event`{.haskell}s that might be missing some
 leptons.
@@ -195,7 +216,9 @@ _composable context_, so we can use it in our generic monadic code!
 How do `Maybe`{.haskell}s compose?
 Well, if we try to compose two `Just`{.haskell}s, then we get yet another
 `Just`{.haskell}; if there are any `Nothing`{.haskell}s involoved, the
-combination always yields a `Nothing`{.haskell}.
+combination always yields another `Nothing`{.haskell}.
+Translating back to "cut" analagy: as soon as any cut fails, the whole
+computation ends in failure.
 
 Try it out:
 
@@ -216,18 +239,22 @@ well... we can't do the calculation, so we get `Nothing`{.haskell} back.
 Now _some_ people might ask, "why don't I just use a default value in this
 situation?"
 I'll let you think carefully about that one and come up with your own reasons as
-to why default values are, in general, a Really Bad Idea.
+to why default values are, in general, a Really Bad Idea; `Maybe`{.haskell}
+gives us an easy way to avoid them.
 
 Shall we try another context?
-How about this: let's take on "scale factors".
+Let's take on "scale factors".
 What if our `Event`{.haskell}'s electron and muon each come with some scale
-factor that ought to be taken into account?
-Well, this is clearly just another context: each value carries along with it an
-extra `Double`{.haskell}, and these `Double`{.haskell}s are _multiplicative
-factors_, i.e. to compose the contexts we multiply the scale factors.
-We've just defined (broken record alert) yet another composable context that we
-can plug into our `sumPt`{.haskell} function.
-And by black magic all of this already lives in the haskell `base` libraries.
+factor that ought to be taken into account, i.e. we believe that leptons like
+these appear in the data more or less often than in the simulation?
+Well, this is clearly just another kind of context: each value carries along
+with it an extra `Double`{.haskell}, and these `Double`{.haskell}s are
+_multiplicative factors_, i.e. to compose the contexts we multiply the scale
+factors.
+We've just defined (broken record alert) another composable context that we can
+plug into our `sumPt`{.haskell} function, and by black magic all of this already
+lives in the haskell `base` libraries (just like `Maybe`{.haskell} did for
+cuts).
 
 > type SF = Product Double
 >
@@ -238,7 +265,7 @@ If that's not 100\% clear, `evtSF`{.haskell} is an `Event`{.haskell} whose
 electrons and muons have some scale factor associated to them: we now have a
 context of type
 
-    (,) SF
+< (,) SF
 
 which translates into a 2-tuple in which the first object is always a scale
 factor (in haskell `(x, y)`{.haskell} is just syntactic sugar for the tuple
@@ -275,8 +302,9 @@ context, and a very useful one at that.
 > evtProb :: PrimMonad m => Event (Prob m)
 > evtProb = Event (normal 25.5 4.3) (normal 54.2 11.9)
 
-The above defines an event that, instead of having particular values for the
-electron and muon pts, holds probability distributions for each of them.
+The above defines an event `evtProb`{.haskell} that, instead of having
+particular values for the electron and muon pts, holds probability distributions
+for each of them.
 In this case the electron (muon) pt is normally distributed around a mean of
 25.5 (54.2) and standard deviation of 4.3 (11.9).
 
@@ -306,10 +334,12 @@ We're getting back a probability distribution over all possible
 `Double`{.haskell}s, which is what we want...but how does one print such a
 thing?
 That's a great question, and one which apparently the compiler can't answer!
-One thing we can do _for sure_, though, is sample this distribution:
+One thing we can do, even if we can't print it, is sample it:
 
     HEPExample> withSystemRandom . asGenIO . samples 10 $ sumPt evtProb
-    [94.11359301538116,84.77993589158864,92.82674080235154,61.9462895476663,92.13224164142169,88.92614222298857,71.01504548041477,77.92693906507571,109.10381978490473,97.80981038489617]
+    [94.11359301538116,84.77993589158864,92.82674080235154,61.9462895476663
+    ,92.13224164142169,88.92614222298857,71.01504548041477,77.92693906507571
+    ,109.10381978490473,97.80981038489617]
 
 Now don't get confused by
 "`withSystemRandom . asGenIO . samples 10 $`{.haskell}"; that is simply saying,
@@ -322,6 +352,7 @@ Pretty slick, huh?
 Of course in practice, our event data types and analysis procedures are much
 more complicated than `Event`{.haskell} and `sumPt`{.haskell}.
 Thankfully this is in no way a problem.
+Here's a more complex example.
 
 > data Event'' m =
 >   Event''
@@ -332,13 +363,13 @@ Thankfully this is in no way a problem.
 >
 > sumPt'' :: (Monad m, Alternative m) => Event'' m -> m Double
 > sumPt'' evt = do
->   epts <- ePts evt         -- get electrons
+>   epts <- ePts evt         -- access the event's electrons
 >   guard $ length epts == 1 -- require exactly 1 electron
 >
->   mpts <- mPts evt         -- get muons
+>   mpts <- mPts evt         -- access the event's muons
 >   guard $ length mpts == 1 -- require exactly 1 muon
 >
->   jpts <- jPts evt         -- get jets
+>   jpts <- jPts evt         -- access the event's jets
 >   guard $ length jpts == 2 -- require exactly 2 jets
 >
 >   return . sum $ jpts ++ epts ++ mpts
@@ -350,27 +381,34 @@ automatically propagated through the code just by using an appropriate
 _context_!
 I want to stress here that the type signature of `evtInvM`{.haskell} already
 encodes all of this information: it says you need a composable context
-(`Monad`{.haskell}) that supports the possibility of failure
+(`Monad`{.haskell}) that additionally supports the possibility of failure
 (`Alternative`{.haskell}); as long as you have these, then you can use this
 function.
 We can give it a try on a simple context (`Maybe`{.haskell}) like so:
 
     HEPExample> sumPt'' $ Event'' (Just [28]) (Just [50]) (Just [10, 15])     -- should pass cuts
+    Just 103.0
+
     HEPExample> sumPt'' $ Event'' (Just [28]) Nothing (Just [10, 15])         -- missing a muon
+    Nothing
+
     HEPExample> sumPt'' $ Event'' (Just [28]) (Just [50]) (Just [10, 15, 20]) -- too many jets!
+    Nothing
 
 Whew.
 I think that's enough for today.
 Hopefully I've given you a taste of what can be achieved with these very
-powerful abstractions that mathematicians have known about for years, but which
-only recently have seen use in much "day-to-day" code.
+powerful abstractions that mathematicians and computer scientists have known
+about for years.
 Indeed, many more common idioms fit in the "composable context" box, including
-another ubiquitous one in HEP: systematic variations of values.
-In fact, so-called "stacks" of these contexts quite often follow the required
-rules, so you can construct a combined context that handles scale factors and
-the possibility of failure at the same time.
-And really this is just the tip of the iceberg: there are many more
-interesting, _rigorous_ mathematical concepts at our disposal that already exist
-and are just waiting for us to use them in analyses, and by using these concepts
-we can make our analysis procedures easier to understand, easier to refactor,
-and generally more bug-free!
+another ubiquitous one in HEP: systematic variations of observables.
+In fact, "stacks" of these contexts quite often follow the required rules, so
+we can, for instance, construct a combined context that handles scale factors
+and the possibility of failure at the same time; no need to change the
+`sumPt`{.haskell} function at all.
+
+And this is just the tip of the iceberg: there are many more interesting,
+_rigorous_ mathematical concepts at our disposal that already exist and are just
+waiting for us to use in physics; by using these concepts we can make our
+analysis procedures easier to code and, what is more important in my opinion,
+easier to _understand_.
