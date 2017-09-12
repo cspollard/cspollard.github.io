@@ -404,7 +404,7 @@ then it calculates the pt sum of these objects.
 Any scale factors, systematic variations (which are just approximate probabilty
 distributions), or possible failure of cuts can be automatically propagated
 through the code just by using an appropriate _context_!
-I want to stress here that the type signature of `evtInvM`{.haskell} already
+I want to stress here that the type signature of `sumPt''`{.haskell} already
 encodes all of this information: it says you need a composable context
 (`Monad`{.haskell}) that additionally supports the possibility of failure
 (`Alternative`{.haskell}); as long as you have these, then you can use this
