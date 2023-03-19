@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>VarNotes</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+.Agda .Comment { color: #B22222 }
+.Agda .Background {}
+.Agda .Markup { color: #000000 }
+.Agda .Keyword { color: #CD6600 }
+.Agda .String { color: #B22222 }
+.Agda .Number { color: #A020F0 }
+.Agda .Symbol { color: #404040 }
+.Agda .PrimitiveType { color: #0000CD }
+.Agda .Pragma { color: black }
+.Agda .Operator {}
+.Agda .Hole { background: #B4EEB4 }
+
+.Agda .Bound { color: black }
+.Agda .Generalizable { color: black }
+.Agda .InductiveConstructor { color: #008B00 }
+.Agda .CoinductiveConstructor { color: #8B7500 }
+.Agda .Datatype { color: #0000CD }
+.Agda .Field { color: #EE1289 }
+.Agda .Function { color: #0000CD }
+.Agda .Module { color: #A020F0 }
+.Agda .Postulate { color: #0000CD }
+.Agda .Primitive { color: #0000CD }
+.Agda .Record { color: #0000CD }
+
+.Agda .DottedPattern {}
+.Agda .UnsolvedMeta { color: black; background: yellow }
+.Agda .UnsolvedConstraint { color: black; background: yellow }
+.Agda .TerminationProblem { color: black; background: #FFA07A }
+.Agda .IncompletePattern { color: black; background: #F5DEB3 }
+.Agda .Error { color: red; text-decoration: underline }
+.Agda .TypeChecks { color: black; background: #ADD8E6 }
+.Agda .Deadcode { color: black; background: #808080 }
+.Agda .ShadowingInTelescope { color: black; background: #808080 }
+
+.Agda a { text-decoration: none }
+.Agda a[href]:hover { background-color: #B4EEB4 }
+.Agda [href].hover-highlight { background-color: #B4EEB4; }
+html {
+line-height: 1.5;
+font-family: Georgia, serif;
+font-size: 16px;
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 45em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 800px) {
+body {
+font-size: 0.9em;
+padding: 1em;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+font-size: 85%;
+margin: 0;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<!--
+<pre class="Agda"><a id="14" class="Keyword">module</a> <a id="21" href="VarNotes.html" class="Module">VarNotes</a> <a id="30" class="Keyword">where</a>
+
+<a id="37" class="Keyword">open</a> <a id="42" class="Keyword">import</a> <a id="49" href="Data.String.html" class="Module">Data.String</a> <a id="61" class="Keyword">using</a> <a id="67" class="Symbol">(</a><a id="68" href="Agda.Builtin.String.html#318" class="Postulate">String</a><a id="74" class="Symbol">;</a> <a id="76" href="Data.String.Base.html#4171" class="Datatype">Alignment</a><a id="85" class="Symbol">;</a> <a id="87" href="Data.String.Base.html#2776" class="Function">unlines</a><a id="94" class="Symbol">)</a>
+<a id="96" class="Keyword">open</a> <a id="101" class="Keyword">import</a> <a id="108" href="Data.String.Properties.html" class="Module">Data.String.Properties</a> <a id="131" class="Keyword">using</a> <a id="137" class="Symbol">(</a><a id="138" href="Data.String.Properties.html#3207" class="Function">&lt;-strictTotalOrder-≈</a><a id="158" class="Symbol">)</a>
+<a id="160" class="Keyword">open</a> <a id="165" class="Keyword">import</a> <a id="172" href="Data.Maybe.html" class="Module">Data.Maybe</a> <a id="183" class="Keyword">using</a> <a id="189" class="Symbol">(</a><a id="190" href="Agda.Builtin.Maybe.html#118" class="Datatype">Maybe</a><a id="195" class="Symbol">;</a> <a id="197" href="Agda.Builtin.Maybe.html#156" class="InductiveConstructor">just</a><a id="201" class="Symbol">;</a> <a id="203" href="Agda.Builtin.Maybe.html#177" class="InductiveConstructor">nothing</a><a id="210" class="Symbol">;</a> <a id="212" href="Data.Maybe.Base.html#1563" class="Function">maybe′</a><a id="218" class="Symbol">)</a>
+<a id="220" class="Keyword">open</a> <a id="225" class="Keyword">import</a> <a id="232" href="Function.html" class="Module">Function</a> <a id="241" class="Keyword">using</a> <a id="247" class="Symbol">(</a><a id="248" href="Function.Base.html#1928" class="Function Operator">_$_</a><a id="251" class="Symbol">;</a> <a id="253" href="Function.Base.html#1040" class="Function Operator">_∘_</a><a id="256" class="Symbol">)</a>
+<a id="258" class="Keyword">open</a> <a id="263" class="Keyword">import</a> <a id="270" href="Data.List.html" class="Module">Data.List</a> <a id="280" class="Keyword">using</a> <a id="286" class="Symbol">(</a><a id="287" href="Agda.Builtin.List.html#130" class="Datatype">List</a><a id="291" class="Symbol">;</a> <a id="293" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">_∷_</a><a id="296" class="Symbol">;</a> <a id="298" href="Data.List.Base.html#10392" class="InductiveConstructor">[]</a><a id="300" class="Symbol">;</a> <a id="302" href="Data.List.Base.html#3708" class="Function">unzip</a><a id="307" class="Symbol">)</a> <a id="309" class="Keyword">renaming</a> <a id="318" class="Symbol">(</a><a id="319" href="Data.List.Base.html#1553" class="Function">map</a> <a id="323" class="Symbol">to</a> <a id="326" class="Function">lmap</a><a id="330" class="Symbol">)</a>
+<a id="332" class="Keyword">open</a> <a id="337" class="Keyword">import</a> <a id="344" href="Category.Monad.html" class="Module">Category.Monad</a>
+<a id="359" class="Keyword">open</a> <a id="364" class="Keyword">import</a> <a id="371" href="Data.Nat.html" class="Module">Data.Nat</a> <a id="380" class="Keyword">using</a> <a id="386" class="Symbol">(</a><a id="387" href="Agda.Builtin.Nat.html#204" class="InductiveConstructor">zero</a><a id="391" class="Symbol">;</a> <a id="393" href="Agda.Builtin.Nat.html#217" class="InductiveConstructor">suc</a><a id="396" class="Symbol">;</a> <a id="398" href="Agda.Builtin.Nat.html#186" class="Datatype">ℕ</a><a id="399" class="Symbol">)</a> <a id="401" class="Keyword">renaming</a> <a id="410" class="Symbol">(</a><a id="411" href="Agda.Builtin.Nat.html#319" class="Primitive Operator">_+_</a> <a id="415" class="Symbol">to</a> <a id="418" class="Primitive Operator">_+ℕ_</a><a id="422" class="Symbol">)</a>
+<a id="424" class="Keyword">open</a> <a id="429" class="Keyword">import</a> <a id="436" href="Data.Product.html" class="Module">Data.Product</a> <a id="449" class="Keyword">using</a> <a id="455" class="Symbol">(</a><a id="456" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">_,_</a><a id="459" class="Symbol">;</a> <a id="461" href="Data.Product.html#1176" class="Function Operator">_×_</a><a id="464" class="Symbol">;</a> <a id="466" href="Data.Product.html#2684" class="Function">map₂</a><a id="470" class="Symbol">)</a>
+<a id="472" class="Keyword">open</a> <a id="477" class="Keyword">import</a> <a id="484" href="Relation.Binary.PropositionalEquality.html" class="Module">Relation.Binary.PropositionalEquality</a> <a id="522" class="Keyword">using</a> <a id="528" class="Symbol">(</a><a id="529" href="Agda.Builtin.Equality.html#190" class="InductiveConstructor">refl</a><a id="533" class="Symbol">;</a> <a id="535" href="Agda.Builtin.Equality.html#133" class="Datatype Operator">_≡_</a><a id="538" class="Symbol">)</a>
+<a id="540" class="Keyword">open</a> <a id="545" class="Keyword">import</a> <a id="552" href="Level.html" class="Module">Level</a> <a id="558" class="Keyword">using</a> <a id="564" class="Symbol">(</a><a id="565" href="Agda.Primitive.html#591" class="Postulate">Level</a><a id="570" class="Symbol">;</a> <a id="572" href="Agda.Primitive.html#804" class="Primitive Operator">_⊔_</a><a id="575" class="Symbol">;</a> <a id="577" href="Level.html#521" class="Function">0ℓ</a><a id="579" class="Symbol">)</a>
+<a id="581" class="Keyword">open</a> <a id="586" class="Keyword">import</a> <a id="593" href="Data.Vec.Recursive.html" class="Module">Data.Vec.Recursive</a> <a id="612" class="Keyword">using</a> <a id="618" class="Symbol">(</a><a id="619" href="Data.Vec.Recursive.html#1435" class="Function Operator">_^_</a><a id="622" class="Symbol">)</a>
+<a id="624" class="Keyword">open</a> <a id="629" class="Keyword">import</a> <a id="636" href="Data.Bool.html" class="Module">Data.Bool</a> <a id="646" class="Keyword">using</a> <a id="652" class="Symbol">(</a><a id="653" href="Agda.Builtin.Bool.html#156" class="Datatype">Bool</a><a id="657" class="Symbol">;</a> <a id="659" href="Data.Bool.Base.html#941" class="Function">not</a><a id="662" class="Symbol">;</a> <a id="664" href="Agda.Builtin.Bool.html#181" class="InductiveConstructor">true</a><a id="668" class="Symbol">;</a> <a id="670" href="Agda.Builtin.Bool.html#175" class="InductiveConstructor">false</a><a id="675" class="Symbol">;</a> <a id="677" href="Data.Bool.Base.html#1292" class="Function Operator">if_then_else_</a><a id="690" class="Symbol">)</a> <a id="692" class="Keyword">renaming</a> <a id="701" class="Symbol">(</a><a id="702" href="Data.Bool.Base.html#995" class="Function Operator">_∧_</a> <a id="706" class="Symbol">to</a> <a id="709" class="Function Operator">_and_</a><a id="714" class="Symbol">)</a>
+<a id="716" class="Keyword">open</a> <a id="721" class="Keyword">import</a> <a id="728" href="Data.Float.html" class="Module">Data.Float</a>
+<a id="739" class="Keyword">open</a> <a id="744" class="Keyword">import</a> <a id="751" href="Data.Unit.Polymorphic.html" class="Module">Data.Unit.Polymorphic</a> <a id="773" class="Keyword">using</a> <a id="779" class="Symbol">(</a><a id="780" href="Data.Unit.Polymorphic.Base.html#533" class="Function">tt</a><a id="782" class="Symbol">;</a> <a id="784" href="Data.Unit.Polymorphic.Base.html#489" class="Function">⊤</a><a id="785" class="Symbol">)</a>
+
+<a id="788" class="Keyword">import</a> <a id="795" href="Data.Tree.AVL.Map.html" class="Module">Data.Tree.AVL.Map</a> <a id="813" href="Data.String.Properties.html#3207" class="Function">&lt;-strictTotalOrder-≈</a> as <a id="M"></a><a id="837" href="VarNotes.html#837" class="Module">M</a>
+
+<a id="840" class="Keyword">open</a> <a id="845" href="VarNotes.html#837" class="Module">M</a> <a id="847" class="Keyword">using</a> <a id="853" class="Symbol">(</a><a id="854" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a><a id="857" class="Symbol">)</a>
+
+<a id="860" class="Keyword">private</a>
+  <a id="870" class="Keyword">variable</a>
+    <a id="883" href="VarNotes.html#883" class="Generalizable">a</a> <a id="885" href="VarNotes.html#885" class="Generalizable">b</a> <a id="887" class="Symbol">:</a> <a id="889" href="Agda.Primitive.html#591" class="Postulate">Level</a>
+    <a id="899" href="VarNotes.html#899" class="Generalizable">A</a> <a id="901" class="Symbol">:</a> <a id="903" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="907" href="VarNotes.html#883" class="Generalizable">a</a>
+    <a id="913" href="VarNotes.html#913" class="Generalizable">B</a> <a id="915" class="Symbol">:</a> <a id="917" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="921" href="VarNotes.html#885" class="Generalizable">b</a>
+
+
+<a id="925" class="Keyword">module</a> <a id="Variation"></a><a id="932" href="VarNotes.html#932" class="Module">Variation</a> <a id="942" class="Keyword">where</a>
+  <a id="950" class="Keyword">data</a> <a id="Variation.Variation"></a><a id="955" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="965" class="Symbol">{</a><a id="966" href="VarNotes.html#966" class="Bound">a</a><a id="967" class="Symbol">}</a> <a id="969" class="Symbol">(</a><a id="970" href="VarNotes.html#970" class="Bound">A</a> <a id="972" class="Symbol">:</a> <a id="974" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="978" href="VarNotes.html#966" class="Bound">a</a><a id="979" class="Symbol">)</a> <a id="981" class="Symbol">:</a> <a id="983" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="987" href="VarNotes.html#966" class="Bound">a</a> <a id="989" class="Keyword">where</a>
+    <a id="Variation.Variation.variation"></a><a id="999" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1009" class="Symbol">:</a> <a id="1011" href="VarNotes.html#970" class="Bound">A</a> <a id="1013" class="Symbol">→</a> <a id="1015" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1019" href="VarNotes.html#970" class="Bound">A</a> <a id="1021" class="Symbol">→</a> <a id="1023" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1033" href="VarNotes.html#970" class="Bound">A</a>
+
+  <a id="Variation.nominal"></a><a id="1038" href="VarNotes.html#1038" class="Function">nominal</a> <a id="1046" class="Symbol">:</a> <a id="1048" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1058" href="VarNotes.html#899" class="Generalizable">A</a> <a id="1060" class="Symbol">→</a> <a id="1062" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="1066" href="VarNotes.html#1038" class="Function">nominal</a> <a id="1074" class="Symbol">(</a><a id="1075" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1085" href="VarNotes.html#1085" class="Bound">x</a> <a id="1087" class="Symbol">_)</a> <a id="1090" class="Symbol">=</a> <a id="1092" href="VarNotes.html#1085" class="Bound">x</a>
+
+  <a id="Variation.variations"></a><a id="1097" href="VarNotes.html#1097" class="Function">variations</a> <a id="1108" class="Symbol">:</a> <a id="1110" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1120" href="VarNotes.html#899" class="Generalizable">A</a> <a id="1122" class="Symbol">→</a> <a id="1124" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1128" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="1132" href="VarNotes.html#1097" class="Function">variations</a> <a id="1143" class="Symbol">(</a><a id="1144" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1154" class="Symbol">_</a> <a id="1156" href="VarNotes.html#1156" class="Bound">vx</a><a id="1158" class="Symbol">)</a> <a id="1160" class="Symbol">=</a> <a id="1162" href="VarNotes.html#1156" class="Bound">vx</a>
+
+  <a id="Variation._!_"></a><a id="1168" href="VarNotes.html#1168" class="Function Operator">_!_</a> <a id="1172" class="Symbol">:</a> <a id="1174" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1184" href="VarNotes.html#899" class="Generalizable">A</a> <a id="1186" class="Symbol">→</a> <a id="1188" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="1195" class="Symbol">→</a> <a id="1197" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="1201" class="Symbol">(</a><a id="1202" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1212" href="VarNotes.html#1212" class="Bound">x</a> <a id="1214" href="VarNotes.html#1214" class="Bound">vx</a><a id="1216" class="Symbol">)</a> <a id="1218" href="VarNotes.html#1168" class="Function Operator">!</a> <a id="1220" href="VarNotes.html#1220" class="Bound">k</a> <a id="1222" class="Symbol">=</a> <a id="1224" href="Data.Maybe.Base.html#1563" class="Function">maybe′</a> <a id="1231" class="Symbol">(λ</a> <a id="1234" href="VarNotes.html#1234" class="Bound">x</a> <a id="1236" class="Symbol">→</a> <a id="1238" href="VarNotes.html#1234" class="Bound">x</a><a id="1239" class="Symbol">)</a> <a id="1241" href="VarNotes.html#1212" class="Bound">x</a> <a id="1243" class="Symbol">(</a><a id="1244" href="Data.Tree.AVL.Map.html#1557" class="Function">M.lookup</a> <a id="1253" href="VarNotes.html#1220" class="Bound">k</a> <a id="1255" href="VarNotes.html#1214" class="Bound">vx</a><a id="1257" class="Symbol">)</a>
+
+  <a id="1262" class="Keyword">infixl</a> <a id="1269" class="Number">4</a> <a id="1271" href="VarNotes.html#1283" class="Function Operator">_&lt;$&gt;_</a>
+  <a id="Variation.map"></a><a id="1279" href="VarNotes.html#1279" class="Function">map</a> <a id="Variation._&lt;$&gt;_"></a><a id="1283" href="VarNotes.html#1283" class="Function Operator">_&lt;$&gt;_</a> <a id="1289" class="Symbol">:</a> <a id="1291" class="Symbol">∀</a> <a id="1293" class="Symbol">{</a><a id="1294" href="VarNotes.html#1294" class="Bound">a</a><a id="1295" class="Symbol">}</a> <a id="1297" class="Symbol">{</a><a id="1298" href="VarNotes.html#1298" class="Bound">A</a> <a id="1300" href="VarNotes.html#1300" class="Bound">B</a> <a id="1302" class="Symbol">:</a> <a id="1304" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="1308" href="VarNotes.html#1294" class="Bound">a</a><a id="1309" class="Symbol">}</a> <a id="1311" class="Symbol">(</a><a id="1312" href="VarNotes.html#1312" class="Bound">f</a> <a id="1314" class="Symbol">:</a> <a id="1316" href="VarNotes.html#1298" class="Bound">A</a> <a id="1318" class="Symbol">→</a> <a id="1320" href="VarNotes.html#1300" class="Bound">B</a><a id="1321" class="Symbol">)</a> <a id="1323" class="Symbol">→</a> <a id="1325" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1335" href="VarNotes.html#1298" class="Bound">A</a> <a id="1337" class="Symbol">→</a> <a id="1339" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1349" href="VarNotes.html#1300" class="Bound">B</a>
+  <a id="1353" href="VarNotes.html#1279" class="Function">map</a> <a id="1357" href="VarNotes.html#1357" class="Bound">f</a> <a id="1359" class="Symbol">(</a><a id="1360" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1370" href="VarNotes.html#1370" class="Bound">x</a> <a id="1372" href="VarNotes.html#1372" class="Bound">vx</a><a id="1374" class="Symbol">)</a> <a id="1376" class="Symbol">=</a> <a id="1378" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1388" class="Symbol">(</a><a id="1389" href="VarNotes.html#1357" class="Bound">f</a> <a id="1391" href="VarNotes.html#1370" class="Bound">x</a><a id="1392" class="Symbol">)</a> <a id="1394" class="Symbol">(</a><a id="1395" href="Data.Tree.AVL.Map.html#1609" class="Function">M.map</a> <a id="1401" href="VarNotes.html#1357" class="Bound">f</a> <a id="1403" href="VarNotes.html#1372" class="Bound">vx</a><a id="1405" class="Symbol">)</a>
+  <a id="1409" href="VarNotes.html#1283" class="Function Operator">_&lt;$&gt;_</a> <a id="1415" class="Symbol">=</a> <a id="1417" href="VarNotes.html#1279" class="Function">map</a>
+
+  <a id="1424" class="Keyword">infixl</a> <a id="1431" class="Number">4</a> <a id="1433" href="VarNotes.html#1444" class="Function Operator">_&lt;*&gt;_</a>
+  <a id="Variation.ap"></a><a id="1441" href="VarNotes.html#1441" class="Function">ap</a> <a id="Variation._&lt;*&gt;_"></a><a id="1444" href="VarNotes.html#1444" class="Function Operator">_&lt;*&gt;_</a> <a id="1450" class="Symbol">:</a> <a id="1452" class="Symbol">∀</a> <a id="1454" class="Symbol">{</a><a id="1455" href="VarNotes.html#1455" class="Bound">a</a><a id="1456" class="Symbol">}</a> <a id="1458" class="Symbol">{</a><a id="1459" href="VarNotes.html#1459" class="Bound">A</a> <a id="1461" href="VarNotes.html#1461" class="Bound">B</a> <a id="1463" class="Symbol">:</a> <a id="1465" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="1469" href="VarNotes.html#1455" class="Bound">a</a><a id="1470" class="Symbol">}</a> <a id="1472" class="Symbol">→</a> <a id="1474" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1484" class="Symbol">(</a><a id="1485" href="VarNotes.html#1459" class="Bound">A</a> <a id="1487" class="Symbol">→</a> <a id="1489" href="VarNotes.html#1461" class="Bound">B</a><a id="1490" class="Symbol">)</a> <a id="1492" class="Symbol">→</a> <a id="1494" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1504" href="VarNotes.html#1459" class="Bound">A</a> <a id="1506" class="Symbol">→</a> <a id="1508" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1518" href="VarNotes.html#1461" class="Bound">B</a>
+  <a id="1522" href="VarNotes.html#1441" class="Function">ap</a> <a id="1525" class="Symbol">(</a><a id="1526" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1536" href="VarNotes.html#1536" class="Bound">f</a> <a id="1538" href="VarNotes.html#1538" class="Bound">vf</a><a id="1540" class="Symbol">)</a> <a id="1542" class="Symbol">(</a><a id="1543" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1553" href="VarNotes.html#1553" class="Bound">x</a> <a id="1555" href="VarNotes.html#1555" class="Bound">vx</a><a id="1557" class="Symbol">)</a> <a id="1559" class="Symbol">=</a>
+    <a id="1565" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1575" class="Symbol">(</a><a id="1576" href="VarNotes.html#1536" class="Bound">f</a> <a id="1578" href="VarNotes.html#1553" class="Bound">x</a><a id="1579" class="Symbol">)</a> <a id="1581" href="Function.Base.html#1040" class="Function Operator">∘</a> <a id="1583" href="Data.Tree.AVL.Map.html#2544" class="Function">M.unions</a>
+    <a id="1596" href="Function.Base.html#1928" class="Function Operator">$</a>   <a id="1600" href="Data.Tree.AVL.Map.html#2710" class="Function">M.intersectionWith</a> <a id="1619" class="Symbol">(</a><a id="1620" href="Function.Base.html#1928" class="Function Operator">_$_</a><a id="1623" class="Symbol">)</a> <a id="1625" href="VarNotes.html#1538" class="Bound">vf</a> <a id="1628" href="VarNotes.html#1555" class="Bound">vx</a>
+      <a id="1637" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="1639" href="Data.Tree.AVL.Map.html#1609" class="Function">M.map</a> <a id="1645" class="Symbol">(</a><a id="1646" href="Function.Base.html#1928" class="Function Operator">_$</a> <a id="1649" href="VarNotes.html#1553" class="Bound">x</a><a id="1650" class="Symbol">)</a> <a id="1652" href="VarNotes.html#1538" class="Bound">vf</a>
+      <a id="1661" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="1663" href="Data.Tree.AVL.Map.html#1609" class="Function">M.map</a> <a id="1669" href="VarNotes.html#1536" class="Bound">f</a> <a id="1671" href="VarNotes.html#1555" class="Bound">vx</a>
+      <a id="1680" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="1682" href="Agda.Builtin.List.html#167" class="InductiveConstructor">[]</a>
+
+  <a id="1688" href="VarNotes.html#1444" class="Function Operator">_&lt;*&gt;_</a> <a id="1694" class="Symbol">=</a> <a id="1696" href="VarNotes.html#1441" class="Function">ap</a>
+
+  <a id="Variation.pure"></a><a id="1702" href="VarNotes.html#1702" class="Function">pure</a> <a id="Variation.return"></a><a id="1707" href="VarNotes.html#1707" class="Function">return</a> <a id="1714" class="Symbol">:</a> <a id="1716" href="VarNotes.html#899" class="Generalizable">A</a> <a id="1718" class="Symbol">→</a> <a id="1720" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1730" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="1734" href="VarNotes.html#1702" class="Function">pure</a> <a id="1739" href="VarNotes.html#1739" class="Bound">x</a> <a id="1741" class="Symbol">=</a> <a id="1743" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="1753" href="VarNotes.html#1739" class="Bound">x</a> <a id="1755" href="Data.Tree.AVL.Map.html#1287" class="Function">M.empty</a>
+  <a id="1765" href="VarNotes.html#1707" class="Function">return</a> <a id="1772" class="Symbol">=</a> <a id="1774" href="VarNotes.html#1702" class="Function">pure</a>
+
+  <a id="Variation.diag"></a><a id="1782" href="VarNotes.html#1782" class="Function">diag</a> <a id="1787" class="Symbol">:</a> <a id="1789" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1793" class="Symbol">(</a><a id="1794" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1798" href="VarNotes.html#899" class="Generalizable">A</a><a id="1799" class="Symbol">)</a> <a id="1801" class="Symbol">→</a> <a id="1803" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1807" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="1811" href="VarNotes.html#1782" class="Function">diag</a> <a id="1816" class="Symbol">{</a><a id="1817" class="Argument">A</a> <a id="1819" class="Symbol">=</a> <a id="1821" href="VarNotes.html#1821" class="Bound">A</a><a id="1822" class="Symbol">}</a> <a id="1824" class="Symbol">=</a> <a id="1826" href="Data.Tree.AVL.Map.html#1926" class="Function">M.foldr</a> <a id="1834" href="VarNotes.html#1861" class="Function">go</a> <a id="1837" href="Data.Tree.AVL.Map.html#1287" class="Function">M.empty</a>
+    <a id="1849" class="Keyword">where</a>
+      <a id="1861" href="VarNotes.html#1861" class="Function">go</a> <a id="1864" class="Symbol">:</a> <a id="1866" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="1873" class="Symbol">→</a> <a id="1875" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1879" href="VarNotes.html#1821" class="Bound">A</a> <a id="1881" class="Symbol">→</a> <a id="1883" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1887" href="VarNotes.html#1821" class="Bound">A</a> <a id="1889" class="Symbol">→</a> <a id="1891" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="1895" href="VarNotes.html#1821" class="Bound">A</a>
+      <a id="1903" href="VarNotes.html#1861" class="Function">go</a> <a id="1906" href="VarNotes.html#1906" class="Bound">k</a> <a id="1908" href="VarNotes.html#1908" class="Bound">m</a> <a id="1910" href="VarNotes.html#1910" class="Bound">m&#39;</a> <a id="1913" class="Symbol">=</a> <a id="1915" href="Data.Maybe.Base.html#1563" class="Function">maybe′</a> <a id="1922" class="Symbol">(λ</a> <a id="1925" href="VarNotes.html#1925" class="Bound">x</a> <a id="1927" class="Symbol">→</a> <a id="1929" href="Data.Tree.AVL.Map.html#1375" class="Function">M.insert</a> <a id="1938" href="VarNotes.html#1906" class="Bound">k</a> <a id="1940" href="VarNotes.html#1925" class="Bound">x</a> <a id="1942" href="VarNotes.html#1910" class="Bound">m&#39;</a><a id="1944" class="Symbol">)</a> <a id="1946" href="VarNotes.html#1910" class="Bound">m&#39;</a> <a id="1949" class="Symbol">(</a><a id="1950" href="Data.Tree.AVL.Map.html#1557" class="Function">M.lookup</a> <a id="1959" href="VarNotes.html#1906" class="Bound">k</a> <a id="1961" href="VarNotes.html#1908" class="Bound">m</a><a id="1962" class="Symbol">)</a>
+
+  <a id="Variation.join"></a><a id="1967" href="VarNotes.html#1967" class="Function">join</a> <a id="1972" class="Symbol">:</a> <a id="1974" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1984" class="Symbol">(</a><a id="1985" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="1995" href="VarNotes.html#899" class="Generalizable">A</a><a id="1996" class="Symbol">)</a> <a id="1998" class="Symbol">→</a> <a id="2000" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2010" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="2014" href="VarNotes.html#1967" class="Function">join</a> <a id="2019" class="Symbol">(</a><a id="2020" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="2030" class="Symbol">(</a><a id="2031" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="2041" href="VarNotes.html#2041" class="Bound">x</a> <a id="2043" href="VarNotes.html#2043" class="Bound">vx</a><a id="2045" class="Symbol">)</a> <a id="2047" href="VarNotes.html#2047" class="Bound">vvx</a><a id="2050" class="Symbol">)</a> <a id="2052" class="Symbol">=</a>
+    <a id="2058" class="Keyword">let</a> <a id="2062" href="VarNotes.html#2062" class="Bound">vvxnom</a> <a id="2069" class="Symbol">=</a> <a id="2071" href="Data.Tree.AVL.Map.html#1609" class="Function">M.map</a> <a id="2077" href="VarNotes.html#1038" class="Function">nominal</a> <a id="2085" href="VarNotes.html#2047" class="Bound">vvx</a>
+        <a id="2097" href="VarNotes.html#2097" class="Bound">vvxvar</a> <a id="2104" class="Symbol">=</a> <a id="2106" href="Data.Tree.AVL.Map.html#1609" class="Function">M.map</a> <a id="2112" href="VarNotes.html#1097" class="Function">variations</a> <a id="2123" href="VarNotes.html#2047" class="Bound">vvx</a>
+    <a id="2131" class="Keyword">in</a>
+      <a id="2140" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="2150" href="VarNotes.html#2041" class="Bound">x</a> <a id="2152" href="Function.Base.html#1040" class="Function Operator">∘</a> <a id="2154" href="Data.Tree.AVL.Map.html#2544" class="Function">M.unions</a>
+      <a id="2169" href="Function.Base.html#1928" class="Function Operator">$</a>   <a id="2173" href="VarNotes.html#1782" class="Function">diag</a> <a id="2178" href="VarNotes.html#2097" class="Bound">vvxvar</a>
+        <a id="2193" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="2195" href="VarNotes.html#2062" class="Bound">vvxnom</a>
+        <a id="2210" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="2212" href="VarNotes.html#2043" class="Bound">vx</a>
+        <a id="2223" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="2225" href="Agda.Builtin.List.html#167" class="InductiveConstructor">[]</a>
+
+  <a id="Variation._&gt;&gt;=_"></a><a id="2231" href="VarNotes.html#2231" class="Function Operator">_&gt;&gt;=_</a> <a id="2237" class="Symbol">:</a> <a id="2239" class="Symbol">∀</a> <a id="2241" class="Symbol">{</a><a id="2242" href="VarNotes.html#2242" class="Bound">a</a><a id="2243" class="Symbol">}</a> <a id="2245" class="Symbol">{</a><a id="2246" href="VarNotes.html#2246" class="Bound">A</a> <a id="2248" href="VarNotes.html#2248" class="Bound">B</a> <a id="2250" class="Symbol">:</a> <a id="2252" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="2256" href="VarNotes.html#2242" class="Bound">a</a><a id="2257" class="Symbol">}</a> <a id="2259" class="Symbol">→</a> <a id="2261" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2271" href="VarNotes.html#2246" class="Bound">A</a> <a id="2273" class="Symbol">→</a> <a id="2275" class="Symbol">(</a><a id="2276" href="VarNotes.html#2246" class="Bound">A</a> <a id="2278" class="Symbol">→</a> <a id="2280" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2290" href="VarNotes.html#2248" class="Bound">B</a><a id="2291" class="Symbol">)</a> <a id="2293" class="Symbol">→</a> <a id="2295" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2305" href="VarNotes.html#2248" class="Bound">B</a>
+  <a id="2309" href="VarNotes.html#2309" class="Bound">v</a> <a id="2311" href="VarNotes.html#2231" class="Function Operator">&gt;&gt;=</a> <a id="2315" href="VarNotes.html#2315" class="Bound">f</a> <a id="2317" class="Symbol">=</a> <a id="2319" href="VarNotes.html#1967" class="Function">join</a> <a id="2324" class="Symbol">(</a><a id="2325" href="VarNotes.html#1279" class="Function">map</a> <a id="2329" href="VarNotes.html#2315" class="Bound">f</a> <a id="2331" href="VarNotes.html#2309" class="Bound">v</a><a id="2332" class="Symbol">)</a>
+
+  <a id="Variation.rawMonad"></a><a id="2337" href="VarNotes.html#2337" class="Function">rawMonad</a> <a id="2346" class="Symbol">:</a> <a id="2348" class="Symbol">∀</a> <a id="2350" class="Symbol">{</a><a id="2351" href="VarNotes.html#2351" class="Bound">a</a><a id="2352" class="Symbol">}</a> <a id="2354" class="Symbol">→</a> <a id="2356" href="Category.Monad.html#457" class="Function">RawMonad</a> <a id="2365" class="Symbol">(</a><a id="2366" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2376" class="Symbol">{</a><a id="2377" class="Argument">a</a> <a id="2379" class="Symbol">=</a> <a id="2381" href="VarNotes.html#2351" class="Bound">a</a><a id="2382" class="Symbol">})</a>
+  <a id="2387" href="VarNotes.html#2337" class="Function">rawMonad</a> <a id="2396" class="Symbol">=</a> <a id="2398" class="Keyword">record</a> <a id="2405" class="Symbol">{</a> <a id="2407" href="Category.Monad.Indexed.html#653" class="Field">return</a> <a id="2414" class="Symbol">=</a> <a id="2416" href="VarNotes.html#1707" class="Function">return</a> <a id="2423" class="Symbol">;</a> <a id="2425" href="Category.Monad.Indexed.html#686" class="Field Operator">_&gt;&gt;=_</a> <a id="2431" class="Symbol">=</a> <a id="2433" href="VarNotes.html#2231" class="Function Operator">_&gt;&gt;=_</a> <a id="2439" class="Symbol">}</a>
+
+  <a id="Variation.varToList"></a><a id="2444" href="VarNotes.html#2444" class="Function">varToList</a> <a id="2454" class="Symbol">:</a> <a id="2456" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2466" href="VarNotes.html#899" class="Generalizable">A</a> <a id="2468" class="Symbol">→</a> <a id="2470" href="Agda.Builtin.List.html#130" class="Datatype">List</a> <a id="2475" class="Symbol">(</a><a id="2476" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="2483" href="Data.Product.html#1176" class="Function Operator">×</a> <a id="2485" href="VarNotes.html#899" class="Generalizable">A</a><a id="2486" class="Symbol">)</a>
+  <a id="2490" href="VarNotes.html#2444" class="Function">varToList</a> <a id="2500" class="Symbol">(</a><a id="2501" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="2511" href="VarNotes.html#2511" class="Bound">x</a> <a id="2513" href="VarNotes.html#2513" class="Bound">vx</a><a id="2515" class="Symbol">)</a> <a id="2517" class="Symbol">=</a> <a id="2519" class="Symbol">(</a><a id="2520" class="String">&quot;nominal&quot;</a> <a id="2530" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="2532" href="VarNotes.html#2511" class="Bound">x</a><a id="2533" class="Symbol">)</a> <a id="2535" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="2537" href="Data.Tree.AVL.Map.html#2093" class="Function">M.toList</a> <a id="2546" href="VarNotes.html#2513" class="Bound">vx</a>
+
+  <a id="Variation.prettyVar"></a><a id="2552" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="2562" class="Symbol">:</a> <a id="2564" class="Symbol">(</a><a id="2565" href="VarNotes.html#899" class="Generalizable">A</a> <a id="2567" class="Symbol">→</a> <a id="2569" href="Agda.Builtin.String.html#318" class="Postulate">String</a><a id="2575" class="Symbol">)</a> <a id="2577" class="Symbol">→</a> <a id="2579" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="2589" href="VarNotes.html#899" class="Generalizable">A</a> <a id="2591" class="Symbol">→</a> <a id="2593" href="Agda.Builtin.String.html#318" class="Postulate">String</a>
+  <a id="2602" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="2612" href="VarNotes.html#2612" class="Bound">f</a> <a id="2614" href="VarNotes.html#2614" class="Bound">v</a> <a id="2616" class="Symbol">=</a>
+        <a id="2626" class="Keyword">let</a> <a id="2630" href="VarNotes.html#2630" class="Bound">vec</a> <a id="2634" class="Symbol">=</a> <a id="2636" href="Data.Vec.Base.html#2589" class="Function">V.map</a> <a id="2642" class="Symbol">(</a><a id="2643" href="VarNotes.html#2916" class="Function">toVec</a> <a id="2649" href="Function.Base.html#1040" class="Function Operator">∘</a> <a id="2651" href="Data.Product.html#2684" class="Function">map₂</a> <a id="2656" href="VarNotes.html#2612" class="Bound">f</a><a id="2657" class="Symbol">)</a> <a id="2659" class="Symbol">(</a><a id="2660" href="Data.Vec.Base.html#7549" class="Function">V.fromList</a> <a id="2671" class="Symbol">(</a><a id="2672" href="VarNotes.html#2444" class="Function">varToList</a> <a id="2682" href="VarNotes.html#2614" class="Bound">v</a><a id="2683" class="Symbol">))</a>
+            <a id="2698" href="VarNotes.html#2698" class="Bound">vec&#39;</a> <a id="2703" class="Symbol">=</a> <a id="2705" class="Symbol">(</a><a id="2706" class="String">&quot;variation&quot;</a> <a id="2718" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="2722" class="String">&quot;value&quot;</a> <a id="2730" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="2734" href="Data.Vec.Base.html#1043" class="InductiveConstructor">V.[]</a><a id="2738" class="Symbol">)</a> <a id="2740" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="2744" href="VarNotes.html#2630" class="Bound">vec</a>
+        <a id="2756" class="Keyword">in</a> <a id="2759" href="Data.String.Base.html#2776" class="Function">unlines</a> <a id="2767" href="Function.Base.html#1928" class="Function Operator">$</a> <a id="2769" href="Text.Tabular.Vec.html#542" class="Function">display</a> <a id="2777" href="Text.Tabular.Base.html#1351" class="Function">unicode</a> <a id="2785" href="VarNotes.html#3003" class="Function">alignment</a> <a id="2795" href="VarNotes.html#2698" class="Bound">vec&#39;</a>
+
+    <a id="2805" class="Keyword">where</a>
+      <a id="2817" class="Keyword">open</a> <a id="2822" class="Keyword">import</a> <a id="2829" href="Text.Tabular.Vec.html" class="Module">Text.Tabular.Vec</a>
+      <a id="2852" class="Keyword">open</a> <a id="2857" class="Keyword">import</a> <a id="2864" href="Text.Tabular.Base.html" class="Module">Text.Tabular.Base</a>
+      <a id="2888" class="Keyword">import</a> <a id="2895" href="Data.Vec.html" class="Module">Data.Vec</a> <a id="2904" class="Symbol">as</a> <a id="2907" class="Module">V</a>
+
+      <a id="2916" href="VarNotes.html#2916" class="Function">toVec</a> <a id="2922" class="Symbol">:</a> <a id="2924" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="2931" href="Data.Product.html#1176" class="Function Operator">×</a> <a id="2933" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="2940" class="Symbol">→</a> <a id="2942" href="Data.Vec.Base.html#1007" class="Datatype">V.Vec</a> <a id="2948" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="2955" class="Number">2</a>
+      <a id="2963" href="VarNotes.html#2916" class="Function">toVec</a> <a id="2969" class="Symbol">(</a><a id="2970" href="VarNotes.html#2970" class="Bound">x</a> <a id="2972" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="2974" href="VarNotes.html#2974" class="Bound">y</a><a id="2975" class="Symbol">)</a> <a id="2977" class="Symbol">=</a> <a id="2979" href="VarNotes.html#2970" class="Bound">x</a> <a id="2981" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="2985" href="VarNotes.html#2974" class="Bound">y</a> <a id="2987" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="2991" href="Data.Vec.Base.html#1043" class="InductiveConstructor">V.[]</a>
+
+      <a id="3003" href="VarNotes.html#3003" class="Function">alignment</a> <a id="3013" class="Symbol">:</a> <a id="3015" href="Data.Vec.Base.html#1007" class="Datatype">V.Vec</a> <a id="3021" href="Data.String.Base.html#4171" class="Datatype">Alignment</a> <a id="3031" class="Number">2</a>
+      <a id="3039" href="VarNotes.html#3003" class="Function">alignment</a> <a id="3049" class="Symbol">=</a> <a id="3051" href="Data.String.Base.html#4195" class="InductiveConstructor">Left</a> <a id="3056" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="3060" href="Data.String.Base.html#4207" class="InductiveConstructor">Right</a> <a id="3066" href="Data.Vec.Base.html#1062" class="InductiveConstructor Operator">V.∷</a> <a id="3070" href="Data.Vec.Base.html#1043" class="InductiveConstructor">V.[]</a>
+
+<a id="3076" class="Keyword">open</a> <a id="3081" href="VarNotes.html#932" class="Module">Variation</a> <a id="3091" class="Keyword">using</a> <a id="3097" class="Symbol">(</a><a id="3098" href="VarNotes.html#2444" class="Function">varToList</a><a id="3107" class="Symbol">;</a> <a id="3109" href="VarNotes.html#2552" class="Function">prettyVar</a><a id="3118" class="Symbol">;</a> <a id="3120" href="VarNotes.html#955" class="Datatype">Variation</a><a id="3129" class="Symbol">;</a> <a id="3131" href="VarNotes.html#999" class="InductiveConstructor">variation</a><a id="3140" class="Symbol">;</a> <a id="3142" href="VarNotes.html#1168" class="Function Operator">_!_</a><a id="3145" class="Symbol">)</a>
+
+<a id="3148" class="Keyword">module</a> <a id="3155" href="VarNotes.html#3155" class="Module">_</a> <a id="3157" class="Keyword">where</a>
+
+  <a id="3166" href="VarNotes.html#3166" class="Function Operator">[_]&#39;</a> <a id="3171" class="Symbol">:</a> <a id="3173" class="Symbol">∀</a> <a id="3175" class="Symbol">{</a><a id="3176" href="VarNotes.html#3176" class="Bound">a</a><a id="3177" class="Symbol">}</a> <a id="3179" class="Symbol">{</a><a id="3180" href="VarNotes.html#3180" class="Bound">A</a> <a id="3182" class="Symbol">:</a> <a id="3184" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="3188" href="VarNotes.html#3176" class="Bound">a</a><a id="3189" class="Symbol">}</a> <a id="3191" class="Symbol">{</a><a id="3192" href="VarNotes.html#3192" class="Bound">n</a><a id="3193" class="Symbol">}</a> <a id="3195" class="Symbol">→</a> <a id="3197" href="VarNotes.html#3180" class="Bound">A</a> <a id="3199" href="Data.Vec.Recursive.html#1435" class="Function Operator">^</a> <a id="3201" class="Symbol">(</a><a id="3202" href="Agda.Builtin.Nat.html#217" class="InductiveConstructor">suc</a> <a id="3206" href="VarNotes.html#3192" class="Bound">n</a><a id="3207" class="Symbol">)</a> <a id="3209" class="Symbol">→</a> <a id="3211" href="Agda.Builtin.List.html#130" class="Datatype">List</a> <a id="3216" href="VarNotes.html#3180" class="Bound">A</a>
+  <a id="3220" href="VarNotes.html#3166" class="Function Operator">[_]&#39;</a> <a id="3225" class="Symbol">{</a><a id="3226" class="Argument">n</a> <a id="3228" class="Symbol">=</a> <a id="3230" href="Agda.Builtin.Nat.html#204" class="InductiveConstructor">zero</a><a id="3234" class="Symbol">}</a> <a id="3236" href="VarNotes.html#3236" class="Bound">v</a> <a id="3238" class="Symbol">=</a> <a id="3240" href="VarNotes.html#3236" class="Bound">v</a> <a id="3242" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="3244" href="Agda.Builtin.List.html#167" class="InductiveConstructor">[]</a>
+  <a id="3249" href="VarNotes.html#3166" class="Function Operator">[_]&#39;</a> <a id="3254" class="Symbol">{</a><a id="3255" class="Argument">n</a> <a id="3257" class="Symbol">=</a> <a id="3259" href="Agda.Builtin.Nat.html#217" class="InductiveConstructor">suc</a> <a id="3263" href="VarNotes.html#3263" class="Bound">n</a><a id="3264" class="Symbol">}</a> <a id="3266" class="Symbol">(</a><a id="3267" href="VarNotes.html#3267" class="Bound">fst</a> <a id="3271" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="3273" href="VarNotes.html#3273" class="Bound">snd</a><a id="3276" class="Symbol">)</a> <a id="3278" class="Symbol">=</a> <a id="3280" href="VarNotes.html#3267" class="Bound">fst</a> <a id="3284" href="Agda.Builtin.List.html#182" class="InductiveConstructor Operator">∷</a> <a id="3286" href="VarNotes.html#3166" class="Function Operator">[</a> <a id="3288" href="VarNotes.html#3273" class="Bound">snd</a> <a id="3292" href="VarNotes.html#3166" class="Function Operator">]&#39;</a>
+
+  <a id="3298" class="Keyword">module</a> <a id="3305" href="VarNotes.html#3305" class="Module">_</a> <a id="3307" class="Keyword">where</a>
+
+    <a id="3318" class="Keyword">record</a> <a id="3325" href="VarNotes.html#3325" class="Record">Pair</a> <a id="3330" class="Symbol">{</a><a id="3331" href="VarNotes.html#3331" class="Bound">a</a> <a id="3333" href="VarNotes.html#3333" class="Bound">b</a><a id="3334" class="Symbol">}</a> <a id="3336" class="Symbol">(</a><a id="3337" href="VarNotes.html#3337" class="Bound">A</a> <a id="3339" class="Symbol">:</a> <a id="3341" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="3345" href="VarNotes.html#3331" class="Bound">a</a><a id="3346" class="Symbol">)</a> <a id="3348" class="Symbol">(</a><a id="3349" href="VarNotes.html#3349" class="Bound">B</a> <a id="3351" class="Symbol">:</a> <a id="3353" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="3357" href="VarNotes.html#3333" class="Bound">b</a><a id="3358" class="Symbol">)</a> <a id="3360" class="Symbol">:</a> <a id="3362" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="3366" class="Symbol">(</a><a id="3367" href="VarNotes.html#3331" class="Bound">a</a> <a id="3369" href="Agda.Primitive.html#804" class="Primitive Operator">⊔</a> <a id="3371" href="VarNotes.html#3333" class="Bound">b</a><a id="3372" class="Symbol">)</a> <a id="3374" class="Keyword">where</a>
+      <a id="3386" class="Keyword">field</a>
+        <a id="3400" href="VarNotes.html#3400" class="Field">tosum</a> <a id="3406" class="Symbol">:</a> <a id="3408" href="VarNotes.html#3337" class="Bound">A</a> <a id="3410" href="Data.Product.html#1176" class="Function Operator">×</a> <a id="3412" href="VarNotes.html#3349" class="Bound">B</a>
+
+  <a id="3417" class="Keyword">open</a> <a id="3422" href="VarNotes.html#3325" class="Module">Pair</a>
+
+  <a id="3430" href="VarNotes.html#3430" class="Function Operator">[_]</a> <a id="3434" class="Symbol">:</a> <a id="3436" class="Symbol">∀</a> <a id="3438" class="Symbol">{</a><a id="3439" href="VarNotes.html#3439" class="Bound">n</a><a id="3440" class="Symbol">}</a> <a id="3442" class="Symbol">→</a> <a id="3444" class="Symbol">(</a><a id="3445" href="VarNotes.html#3325" class="Record">Pair</a> <a id="3450" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="3457" href="VarNotes.html#899" class="Generalizable">A</a><a id="3458" class="Symbol">)</a> <a id="3460" href="Data.Vec.Recursive.html#1435" class="Function Operator">^</a> <a id="3462" class="Symbol">(</a><a id="3463" href="Agda.Builtin.Nat.html#217" class="InductiveConstructor">suc</a> <a id="3467" href="VarNotes.html#3439" class="Bound">n</a><a id="3468" class="Symbol">)</a> <a id="3470" class="Symbol">→</a> <a id="3472" href="Data.Tree.AVL.Map.html#1120" class="Function">Map</a> <a id="3476" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="3480" href="VarNotes.html#3430" class="Function Operator">[_]</a> <a id="3484" class="Symbol">=</a> <a id="3486" href="Data.Tree.AVL.Map.html#2009" class="Function">M.fromList</a> <a id="3497" href="Function.Base.html#1040" class="Function Operator">∘</a> <a id="3499" href="VarNotes.html#326" class="Function">lmap</a> <a id="3504" href="VarNotes.html#3400" class="Field">tosum</a> <a id="3510" href="Function.Base.html#1040" class="Function Operator">∘</a> <a id="3512" href="VarNotes.html#3166" class="Function Operator">[_]&#39;</a>
+
+  <a id="3520" href="VarNotes.html#3520" class="Function Operator">_∶_</a> <a id="3524" class="Symbol">:</a> <a id="3526" href="VarNotes.html#899" class="Generalizable">A</a> <a id="3528" class="Symbol">→</a> <a id="3530" href="VarNotes.html#913" class="Generalizable">B</a> <a id="3532" class="Symbol">→</a> <a id="3534" href="VarNotes.html#3325" class="Record">Pair</a> <a id="3539" href="VarNotes.html#899" class="Generalizable">A</a> <a id="3541" href="VarNotes.html#913" class="Generalizable">B</a>
+  <a id="3545" href="VarNotes.html#3400" class="Field">tosum</a> <a id="3551" class="Symbol">(</a><a id="3552" href="VarNotes.html#3552" class="Bound">k</a> <a id="3554" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="3556" href="VarNotes.html#3556" class="Bound">v</a><a id="3557" class="Symbol">)</a> <a id="3559" class="Symbol">=</a> <a id="3561" href="VarNotes.html#3552" class="Bound">k</a> <a id="3563" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="3565" href="VarNotes.html#3556" class="Bound">v</a>
+
+  <a id="3570" href="VarNotes.html#3570" class="Function Operator">[_||_]</a> <a id="3577" href="VarNotes.html#3577" class="Function Operator">[_with-variations∶_]</a> <a id="3598" class="Symbol">:</a> <a id="3600" class="Symbol">∀</a> <a id="3602" class="Symbol">{</a><a id="3603" href="VarNotes.html#3603" class="Bound">n</a><a id="3604" class="Symbol">}</a> <a id="3606" class="Symbol">→</a> <a id="3608" href="VarNotes.html#899" class="Generalizable">A</a> <a id="3610" class="Symbol">→</a> <a id="3612" href="VarNotes.html#3325" class="Record">Pair</a> <a id="3617" href="Agda.Builtin.String.html#318" class="Postulate">String</a> <a id="3624" href="VarNotes.html#899" class="Generalizable">A</a> <a id="3626" href="Data.Vec.Recursive.html#1435" class="Function Operator">^</a> <a id="3628" href="VarNotes.html#3603" class="Bound">n</a> <a id="3630" class="Symbol">→</a> <a id="3632" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="3642" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="3646" href="VarNotes.html#3570" class="Function Operator">[_||_]</a> <a id="3653" class="Symbol">{</a><a id="3654" class="Argument">n</a> <a id="3656" class="Symbol">=</a> <a id="3658" href="Agda.Builtin.Nat.html#204" class="InductiveConstructor">zero</a><a id="3662" class="Symbol">}</a> <a id="3664" href="VarNotes.html#3664" class="Bound">x</a> <a id="3666" class="Symbol">_</a> <a id="3668" class="Symbol">=</a> <a id="3670" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="3680" href="VarNotes.html#3664" class="Bound">x</a> <a id="3682" href="Data.Tree.AVL.Map.html#1287" class="Function">M.empty</a>
+  <a id="3692" href="VarNotes.html#3570" class="Function Operator">[_||_]</a> <a id="3699" class="Symbol">{</a><a id="3700" class="Argument">n</a> <a id="3702" class="Symbol">=</a> <a id="3704" href="Agda.Builtin.Nat.html#217" class="InductiveConstructor">suc</a> <a id="3708" href="VarNotes.html#3708" class="Bound">m</a><a id="3709" class="Symbol">}</a> <a id="3711" href="VarNotes.html#3711" class="Bound">x</a> <a id="3713" href="VarNotes.html#3713" class="Bound">vx</a> <a id="3716" class="Symbol">=</a> <a id="3718" href="VarNotes.html#999" class="InductiveConstructor">variation</a> <a id="3728" href="VarNotes.html#3711" class="Bound">x</a> <a id="3730" href="VarNotes.html#3430" class="Function Operator">[</a> <a id="3732" href="VarNotes.html#3713" class="Bound">vx</a> <a id="3735" href="VarNotes.html#3430" class="Function Operator">]</a>
+  <a id="3739" href="VarNotes.html#3577" class="Function Operator">[_with-variations∶_]</a> <a id="3760" class="Symbol">=</a> <a id="3762" href="VarNotes.html#3570" class="Function Operator">[_||_]</a>
+
+
+  <a id="3773" href="VarNotes.html#3773" class="Function">pass</a> <a id="3778" class="Symbol">:</a> <a id="3780" href="VarNotes.html#899" class="Generalizable">A</a> <a id="3782" class="Symbol">→</a> <a id="3784" href="Agda.Builtin.Maybe.html#118" class="Datatype">Maybe</a> <a id="3790" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="3794" href="VarNotes.html#3773" class="Function">pass</a> <a id="3799" class="Symbol">=</a> <a id="3801" href="Agda.Builtin.Maybe.html#156" class="InductiveConstructor">just</a>
+
+  <a id="3809" href="VarNotes.html#3809" class="Function">fail</a> <a id="3814" class="Symbol">:</a> <a id="3816" href="Agda.Builtin.Maybe.html#118" class="Datatype">Maybe</a> <a id="3822" href="VarNotes.html#899" class="Generalizable">A</a>
+  <a id="3826" href="VarNotes.html#3809" class="Function">fail</a> <a id="3831" class="Symbol">=</a> <a id="3833" href="Agda.Builtin.Maybe.html#177" class="InductiveConstructor">nothing</a>
+
+  <a id="3844" href="VarNotes.html#3844" class="Function">Pass/Fail</a> <a id="3854" class="Symbol">=</a> <a id="3856" href="Agda.Builtin.Maybe.html#118" class="Datatype">Maybe</a>
+
+<a id="_&gt;_"></a><a id="3863" href="VarNotes.html#3863" class="Function Operator">_&gt;_</a> <a id="3867" class="Symbol">:</a> <a id="3869" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a> <a id="3875" class="Symbol">→</a> <a id="3877" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a> <a id="3883" class="Symbol">→</a> <a id="3885" href="Agda.Builtin.Bool.html#156" class="Datatype">Bool</a>
+<a id="3890" href="VarNotes.html#3890" class="Bound">x</a> <a id="3892" href="VarNotes.html#3863" class="Function Operator">&gt;</a> <a id="3894" href="VarNotes.html#3894" class="Bound">y</a> <a id="3896" class="Symbol">=</a> <a id="3898" href="Data.Bool.Base.html#941" class="Function">not</a> <a id="3902" class="Symbol">(</a><a id="3903" href="VarNotes.html#3890" class="Bound">x</a> <a id="3905" href="Agda.Builtin.Float.html#404" class="Primitive Operator">≤ᵇ</a> <a id="3908" href="VarNotes.html#3894" class="Bound">y</a><a id="3909" class="Symbol">)</a>
+
+<a id="_or_"></a><a id="3912" href="VarNotes.html#3912" class="Function Operator">_or_</a> <a id="3917" class="Symbol">:</a> <a id="3919" href="Agda.Builtin.Bool.html#156" class="Datatype">Bool</a> <a id="3924" class="Symbol">→</a> <a id="3926" href="Agda.Builtin.Bool.html#156" class="Datatype">Bool</a> <a id="3931" class="Symbol">→</a> <a id="3933" href="Agda.Builtin.Bool.html#156" class="Datatype">Bool</a>
+<a id="3938" href="Agda.Builtin.Bool.html#181" class="InductiveConstructor">true</a> <a id="3943" href="VarNotes.html#3912" class="Function Operator">or</a> <a id="3946" class="Symbol">_</a> <a id="3948" class="Symbol">=</a> <a id="3950" href="Agda.Builtin.Bool.html#181" class="InductiveConstructor">true</a>
+<a id="3955" href="Agda.Builtin.Bool.html#175" class="InductiveConstructor">false</a> <a id="3961" href="VarNotes.html#3912" class="Function Operator">or</a> <a id="3964" href="VarNotes.html#3964" class="Bound">x</a> <a id="3966" class="Symbol">=</a> <a id="3968" href="VarNotes.html#3964" class="Bound">x</a>
+
+<a id="3971" class="Keyword">record</a> <a id="Event"></a><a id="3978" href="VarNotes.html#3978" class="Record">Event</a> <a id="3984" class="Symbol">:</a> <a id="3986" href="Agda.Primitive.html#320" class="Primitive">Set</a> <a id="3990" class="Keyword">where</a>
+  <a id="3998" class="Keyword">field</a>
+    <a id="Event.elpt"></a><a id="4008" href="VarNotes.html#4008" class="Field">elpt</a> <a id="4013" class="Symbol">:</a> <a id="4015" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="4025" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a>
+    <a id="Event.mupt"></a><a id="4035" href="VarNotes.html#4035" class="Field">mupt</a> <a id="4040" class="Symbol">:</a> <a id="4042" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="4052" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a>
+    <a id="Event.jet₁pt"></a><a id="4062" href="VarNotes.html#4062" class="Field">jet₁pt</a> <a id="4069" class="Symbol">:</a> <a id="4071" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="4081" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a>
+    <a id="Event.jet₂pt"></a><a id="4091" href="VarNotes.html#4091" class="Field">jet₂pt</a> <a id="4098" class="Symbol">:</a> <a id="4100" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="4110" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a>
+
+<a id="4117" class="Keyword">open</a> <a id="4122" href="VarNotes.html#3978" class="Module">Event</a>
+<a id="4128" class="Keyword">open</a> <a id="4133" href="Category.Monad.html#841" class="Module">RawMonad</a> <a id="4142" class="Symbol">(</a><a id="4143" href="VarNotes.html#2337" class="Function">Variation.rawMonad</a> <a id="4162" class="Symbol">{</a><a id="4163" class="Argument">a</a> <a id="4165" class="Symbol">=</a> <a id="4167" href="Level.html#521" class="Function">0ℓ</a><a id="4169" class="Symbol">})</a>
+
+<a id="comment[_]_"></a><a id="4173" href="VarNotes.html#4173" class="Function Operator">comment[_]_</a> <a id="4185" class="Symbol">:</a> <a id="4187" href="VarNotes.html#899" class="Generalizable">A</a> <a id="4189" class="Symbol">→</a> <a id="4191" href="VarNotes.html#913" class="Generalizable">B</a> <a id="4193" class="Symbol">→</a> <a id="4195" href="VarNotes.html#913" class="Generalizable">B</a>
+<a id="4197" href="VarNotes.html#4173" class="Function Operator">comment[</a> <a id="4206" class="Symbol">_</a> <a id="4208" href="VarNotes.html#4173" class="Function Operator">]</a> <a id="4210" href="VarNotes.html#4210" class="Bound">x</a> <a id="4212" class="Symbol">=</a> <a id="4214" href="VarNotes.html#4210" class="Bound">x</a>
+</pre>-->
+<h1 id="automatic-propagation-of-systematic-variations">Automatic
+propagation of systematic variations</h1>
+<p>Here are some notes on automatic propagation of variations.</p>
+<p>A few points before diving in:</p>
+<ul>
+<li><p>Don’t get hung up on syntax: you can consider everything below as
+“pseudocode!”</p></li>
+<li><p>In fact this is real, running code that does the “right thing,”
+but…</p></li>
+<li><p>Here I just want to show that it’s possible to write clean,
+readable code that</p>
+<ul>
+<li>does not reference systematic variations directly</li>
+<li>but automatically propagates them correctly and efficiently.</li>
+</ul></li>
+<li><p>For now I leave the details of the implementation hidden from the
+reader, but the underlying algorithms aren’t terribly complex and are
+well-established.</p></li>
+</ul>
+<h2 id="events"><code>Event</code>s</h2>
+<p>Let’s define some (contrived) definition of an event. Suppose we’ve
+already selected events with exactly one electron, one muon, and two
+jets. We’re interested in making some additional requirements on the
+lepton <span class="math inline"><em>p</em><sub><em>T</em></sub></span>s, then we’ll
+build the scalar sum of the <span class="math inline"><em>p</em><sub><em>T</em></sub></span> of all
+objects in the event (often called the <span class="math inline"><em>H</em><sub><em>T</em></sub></span>).</p>
+<p>So we’ll need the <span class="math inline"><em>p</em><sub><em>T</em></sub></span> of each
+object in our event, but each of these will come with some systematic
+variations. That may look something like</p>
+<pre class="Agda"><a id="5421" class="Comment">-- comment: the first line here is a type signature</a>
+<a id="testevent"></a><a id="5473" href="VarNotes.html#5473" class="Function">testevent</a> <a id="5483" class="Symbol">:</a> <a id="5485" href="VarNotes.html#3978" class="Record">Event</a>
+<a id="5491" href="VarNotes.html#4008" class="Field">elpt</a><a id="5495" class="Symbol">(</a><a id="5496" href="VarNotes.html#5473" class="Function">testevent</a><a id="5505" class="Symbol">)</a> <a id="5507" class="Symbol">=</a> <a id="5509" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="5511" class="Number">54.0</a> <a id="5516" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="5533" class="String">&quot;e↑&quot;</a> <a id="5538" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5540" class="Number">60.0</a> <a id="5545" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="5547" class="String">&quot;e↓&quot;</a> <a id="5552" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5554" class="Number">45.0</a> <a id="5559" href="VarNotes.html#3577" class="Function Operator">]</a>
+<a id="5561" href="VarNotes.html#4035" class="Field">mupt</a><a id="5565" class="Symbol">(</a><a id="5566" href="VarNotes.html#5473" class="Function">testevent</a><a id="5575" class="Symbol">)</a> <a id="5577" class="Symbol">=</a> <a id="5579" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="5581" class="Number">35.0</a> <a id="5586" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="5603" class="String">&quot;μ↑&quot;</a> <a id="5608" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5610" class="Number">40.0</a> <a id="5615" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="5617" class="String">&quot;μ↓&quot;</a> <a id="5622" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5624" class="Number">30.0</a> <a id="5629" href="VarNotes.html#3577" class="Function Operator">]</a>
+<a id="5631" href="VarNotes.html#4062" class="Field">jet₁pt</a><a id="5637" class="Symbol">(</a><a id="5638" href="VarNotes.html#5473" class="Function">testevent</a><a id="5647" class="Symbol">)</a> <a id="5649" class="Symbol">=</a> <a id="5651" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="5653" class="Number">28.0</a> <a id="5658" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="5675" class="String">&quot;jes↑&quot;</a> <a id="5682" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5684" class="Number">32.0</a> <a id="5689" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="5691" class="String">&quot;jes↓&quot;</a> <a id="5698" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5700" class="Number">25.0</a> <a id="5705" href="VarNotes.html#3577" class="Function Operator">]</a>
+<a id="5707" href="VarNotes.html#4091" class="Field">jet₂pt</a><a id="5713" class="Symbol">(</a><a id="5714" href="VarNotes.html#5473" class="Function">testevent</a><a id="5723" class="Symbol">)</a> <a id="5725" class="Symbol">=</a> <a id="5727" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="5729" class="Number">26.0</a> <a id="5734" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="5751" class="String">&quot;jes↑&quot;</a> <a id="5758" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5760" class="Number">28.0</a> <a id="5765" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="5767" class="String">&quot;jes↓&quot;</a> <a id="5774" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="5776" class="Number">23.0</a>  <a id="5782" href="VarNotes.html#3577" class="Function Operator">]</a>
+</pre>
+<p>where the nomenclature
+<code>[ YY with-variations∶ &quot;syst1&quot; ∶ WW , &quot;syst2&quot; ∶ ZZ ]</code> means
+that some quantity has a nominal value <code>YY</code> and some named
+systematic variations “syst1” and “syst2” with values <code>WW</code>
+and <code>ZZ</code>, respectively. In the above example, the nominal
+electron <span class="math inline"><em>p</em><sub><em>T</em></sub></span> is 54.0, but
+there are two associated variations: <code>e↑</code> and <code>e↓</code>
+with values 60.0 and 45.0, respectively. You can assume units of GeV if
+that bothers you.</p>
+<h2 id="lepton-selection">Lepton selection</h2>
+<p>Let’s access the event’s electron and muon <span class="math inline"><em>p</em><sub><em>T</em></sub></span>s and impose
+some selection: for example require these are greater than 55 and 30,
+respectively.</p>
+<p>We can define this selection through pseudocode like so.</p>
+<pre class="Agda"><a id="6466" class="Comment">-- comment: applies a selection on the electron and muon in the event.</a>
+<a id="passLepSelection"></a><a id="6537" href="VarNotes.html#6537" class="Function">passLepSelection</a> <a id="6554" class="Symbol">:</a> <a id="6556" href="VarNotes.html#3978" class="Record">Event</a> <a id="6562" class="Symbol">→</a> <a id="6564" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="6574" href="Agda.Builtin.Bool.html#156" class="Datatype">Bool</a>
+<a id="6579" href="VarNotes.html#6537" class="Function">passLepSelection</a><a id="6595" class="Symbol">(</a><a id="6596" href="VarNotes.html#6596" class="Bound">event</a><a id="6601" class="Symbol">)</a> <a id="6603" class="Symbol">=</a> <a id="6605" class="Keyword">do</a>
+  <a id="6610" href="VarNotes.html#6610" class="Bound">ept</a> <a id="6614" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="6616" href="VarNotes.html#4008" class="Field">elpt</a><a id="6620" class="Symbol">(</a><a id="6621" href="VarNotes.html#6596" class="Bound">event</a><a id="6626" class="Symbol">)</a>
+  <a id="6630" href="VarNotes.html#6630" class="Bound">mpt</a> <a id="6634" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="6636" href="VarNotes.html#4035" class="Field">mupt</a><a id="6640" class="Symbol">(</a><a id="6641" href="VarNotes.html#6596" class="Bound">event</a><a id="6646" class="Symbol">)</a>
+  <a id="6650" href="Category.Monad.Indexed.html#653" class="Function">return</a> <a id="6657" class="Symbol">(</a><a id="6658" href="VarNotes.html#6610" class="Bound">ept</a> <a id="6662" href="VarNotes.html#3863" class="Function Operator">&gt;</a> <a id="6664" class="Number">55.0</a> <a id="6669" href="VarNotes.html#709" class="Function Operator">and</a> <a id="6673" href="VarNotes.html#6630" class="Bound">mpt</a> <a id="6677" href="VarNotes.html#3863" class="Function Operator">&gt;</a> <a id="6679" class="Number">30.0</a><a id="6683" class="Symbol">)</a>
+</pre>
+<p>The outgoing type of the function is <code>Variation Bool</code>: in
+general we’d expect to get several outcomes for an event, depending on
+the systematic variation in question. Note that the (pseudo)code itself
+doesn’t reference the variations at all except in the type signature,
+which makes perfect sense: we can establish the <em>computation</em>
+required for an analysis (or some part of an analysis) in the general
+case, and it should correctly <em>apply</em> to all variations.</p>
+<p>If we tabulate the output of applying this function to our
+<code>testevent</code>, including the nominal and systematic variations
+of the <code>Event</code>, we obtain the following.</p>
+<pre class="code"><code>┌─────────┬─────┐
+│variation│value│
+├─────────┼─────┤
+│nominal  │false│
+├─────────┼─────┤
+│e↑       │ true│
+├─────────┼─────┤
+│e↓       │false│
+├─────────┼─────┤
+│μ↑       │false│
+├─────────┼─────┤
+│μ↓       │false│
+└─────────┴─────┘</code></pre>
+<p>This is (hopefully) what you’d get if you did it by hand: only in the
+<code>e↑</code> case does our event pass the lepton selection, as
+expected based on the definition of <code>testevent</code>. Notice that
+the <code>jes</code> variations do <em>not</em> appear here: they do not
+impact the computation of applying the lepton-based selection! This is
+<em>automatically</em> taken into account by the fact that the functions
+<code>elpt</code> and <code>mupt</code> don’t have any jet uncertainties
+associated with them.</p>
+<h2 id="calculating-the-h_t">Calculating the <span class="math inline"><em>H</em><sub><em>T</em></sub></span></h2>
+<p>The pseudocode for calculating the <span class="math inline"><em>H</em><sub><em>T</em></sub></span> would look
+something like</p>
+<pre class="Agda"><a id="8134" class="Comment">-- returns the HT of an incoming event</a>
+<a id="HT"></a><a id="8173" href="VarNotes.html#8173" class="Function">HT</a> <a id="8176" class="Symbol">:</a> <a id="8178" href="VarNotes.html#3978" class="Record">Event</a> <a id="8184" class="Symbol">→</a> <a id="8186" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="8196" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a>
+<a id="8202" href="VarNotes.html#8173" class="Function">HT</a><a id="8204" class="Symbol">(</a><a id="8205" href="VarNotes.html#8205" class="Bound">event</a><a id="8210" class="Symbol">)</a> <a id="8212" class="Symbol">=</a> <a id="8214" class="Keyword">do</a>
+  <a id="8219" href="VarNotes.html#8219" class="Bound">el</a> <a id="8222" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="8224" href="VarNotes.html#4008" class="Field">elpt</a><a id="8228" class="Symbol">(</a><a id="8229" href="VarNotes.html#8205" class="Bound">event</a><a id="8234" class="Symbol">)</a>
+  <a id="8238" href="VarNotes.html#8238" class="Bound">mu</a> <a id="8241" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="8243" href="VarNotes.html#4035" class="Field">mupt</a><a id="8247" class="Symbol">(</a><a id="8248" href="VarNotes.html#8205" class="Bound">event</a><a id="8253" class="Symbol">)</a>
+  <a id="8257" href="VarNotes.html#8257" class="Bound">jet1</a> <a id="8262" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="8264" href="VarNotes.html#4062" class="Field">jet₁pt</a><a id="8270" class="Symbol">(</a><a id="8271" href="VarNotes.html#8205" class="Bound">event</a><a id="8276" class="Symbol">)</a>
+  <a id="8280" href="VarNotes.html#8280" class="Bound">jet2</a> <a id="8285" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="8287" href="VarNotes.html#4091" class="Field">jet₂pt</a><a id="8293" class="Symbol">(</a><a id="8294" href="VarNotes.html#8205" class="Bound">event</a><a id="8299" class="Symbol">)</a>
+  <a id="8303" href="Category.Monad.Indexed.html#653" class="Function">return</a> <a id="8310" class="Symbol">(</a><a id="8311" href="VarNotes.html#8219" class="Bound">el</a> <a id="8314" href="Agda.Builtin.Float.html#1324" class="Primitive Operator">+</a> <a id="8316" href="VarNotes.html#8238" class="Bound">mu</a> <a id="8319" href="Agda.Builtin.Float.html#1324" class="Primitive Operator">+</a> <a id="8321" href="VarNotes.html#8257" class="Bound">jet1</a> <a id="8326" href="Agda.Builtin.Float.html#1324" class="Primitive Operator">+</a> <a id="8328" href="VarNotes.html#8280" class="Bound">jet2</a><a id="8332" class="Symbol">)</a>
+</pre>
+<p>In words: we access the <span class="math inline"><em>p</em><sub><em>T</em></sub></span> of each
+object in the event and return the sum over them. Again, variations do
+not appear in the code itself, but they are taken care of behind the
+scenes.</p>
+<p>If we calculate the <span class="math inline"><em>H</em><sub><em>T</em></sub></span> for our event
+by running the above function and tabulate the outputs, we obtain</p>
+<pre class="code"><code>┌─────────┬─────┐
+│variation│value│
+├─────────┼─────┤
+│nominal  │143.0│
+├─────────┼─────┤
+│e↑       │149.0│
+├─────────┼─────┤
+│e↓       │134.0│
+├─────────┼─────┤
+│jes↑     │149.0│
+├─────────┼─────┤
+│jes↓     │137.0│
+├─────────┼─────┤
+│μ↑       │148.0│
+├─────────┼─────┤
+│μ↓       │138.0│
+└─────────┴─────┘</code></pre>
+<p>Since the <span class="math inline"><em>H</em><sub><em>T</em></sub></span> computation
+involves all objects, all corresponding systematic variations appear
+this time. Notice that the <code>jes</code> variations are (correctly)
+correlated across the two jets.</p>
+<h2 id="putting-it-together">Putting it together</h2>
+<p>Finally, we can apply our lepton selection <em>and</em> calculate the
+<span class="math inline"><em>H</em><sub><em>T</em></sub></span> if the
+leptons are up to snuff. If the leptons fail the cut, then the <span class="math inline"><em>H</em><sub><em>T</em></sub></span> will not be
+calculated (hence the resulting type is
+<code>Variation (Pass/Fail Float)</code>: each event variation may pass
+or fail the selection, and if passed a <code>Float</code> is
+returned).</p>
+<pre class="Agda"><a id="9512" class="Comment">-- require a lepton selection and (if passed) return the HT of the event</a>
+<a id="passLep+HT"></a><a id="9585" href="VarNotes.html#9585" class="Function">passLep+HT</a> <a id="9596" class="Symbol">:</a> <a id="9598" href="VarNotes.html#3978" class="Record">Event</a> <a id="9604" class="Symbol">→</a> <a id="9606" href="VarNotes.html#955" class="Datatype">Variation</a> <a id="9616" class="Symbol">(</a><a id="9617" href="VarNotes.html#3844" class="Function">Pass/Fail</a> <a id="9627" href="Agda.Builtin.Float.html#336" class="Postulate">Float</a><a id="9632" class="Symbol">)</a>
+<a id="9634" href="VarNotes.html#9585" class="Function">passLep+HT</a><a id="9644" class="Symbol">(</a><a id="9645" href="VarNotes.html#9645" class="Bound">event</a><a id="9650" class="Symbol">)</a> <a id="9652" class="Symbol">=</a> <a id="9654" class="Keyword">do</a>
+  <a id="9659" href="VarNotes.html#9659" class="Bound">passLep</a> <a id="9667" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="9669" href="VarNotes.html#6537" class="Function">passLepSelection</a><a id="9685" class="Symbol">(</a><a id="9686" href="VarNotes.html#9645" class="Bound">event</a><a id="9691" class="Symbol">)</a>
+  <a id="9695" href="Data.Bool.Base.html#1292" class="Function Operator">if</a> <a id="9698" href="VarNotes.html#9659" class="Bound">passLep</a>
+    <a id="9710" href="Data.Bool.Base.html#1292" class="Function Operator">then</a>
+      <a id="9721" class="Symbol">(</a> <a id="9723" class="Keyword">do</a>
+        <a id="9734" href="VarNotes.html#9734" class="Bound">ht</a> <a id="9737" href="Category.Monad.Indexed.html#686" class="Function Operator">←</a> <a id="9739" href="VarNotes.html#8173" class="Function">HT</a><a id="9741" class="Symbol">(</a><a id="9742" href="VarNotes.html#9645" class="Bound">event</a><a id="9747" class="Symbol">)</a>
+        <a id="9757" href="Category.Monad.Indexed.html#653" class="Function">return</a> <a id="9764" class="Symbol">(</a><a id="9765" href="VarNotes.html#3773" class="Function">pass</a><a id="9769" class="Symbol">(</a><a id="9770" href="VarNotes.html#9734" class="Bound">ht</a><a id="9772" class="Symbol">))</a>
+      <a id="9781" class="Symbol">)</a>
+    <a id="9787" href="Data.Bool.Base.html#1292" class="Function Operator">else</a>
+      <a id="9798" href="Category.Monad.Indexed.html#653" class="Function">return</a> <a id="9805" href="VarNotes.html#3809" class="Function">fail</a>
+</pre>
+<p>If we tabulate the output of both applying a lepton requirement and
+calculating the <span class="math inline"><em>H</em><sub><em>T</em></sub></span> for our event
+(running <code>passLep+HT(testevent)</code>)</p>
+<pre class="code"><code>┌─────────┬────────────────┐
+│variation│           value│
+├─────────┼────────────────┤
+│nominal  │failed selection│
+├─────────┼────────────────┤
+│e↑       │   passed: 149.0│
+├─────────┼────────────────┤
+│e↓       │failed selection│
+├─────────┼────────────────┤
+│μ↑       │failed selection│
+├─────────┼────────────────┤
+│μ↓       │failed selection│
+└─────────┴────────────────┘</code></pre>
+<p>Notice that the <code>jes</code> variations do not appear: they are
+unneeded since the nominal variation failed the lepton selection.
+Running them would just be a waste of time, and the algorithm “knows”
+this. If you were interested in the <code>jes</code> variations, the
+fact that they don’t appear means that you should just use the
+<code>nominal</code> ouput (which failed), but there’s no point wasting
+CPU cycles doing the calculation!</p>
+<p>If we raise the electron <span class="math inline"><em>p</em><sub><em>T</em></sub></span> slightly so
+that the nominal event does pass the lepton selection, we do indeed
+obtain the <code>jes</code> variations, as required.</p>
+<pre class="Agda"><a id="10917" class="Comment">-- a new Event with a slightly higher nominal electron pT</a>
+<a id="testevent&#39;"></a><a id="10975" href="VarNotes.html#10975" class="Function">testevent&#39;</a> <a id="10986" class="Symbol">:</a> <a id="10988" href="VarNotes.html#3978" class="Record">Event</a>
+<a id="10994" href="VarNotes.html#4008" class="Field">elpt</a><a id="10998" class="Symbol">(</a><a id="10999" href="VarNotes.html#10975" class="Function">testevent&#39;</a><a id="11009" class="Symbol">)</a> <a id="11011" class="Symbol">=</a> <a id="11013" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="11015" class="Number">56.0</a> <a id="11020" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="11037" class="String">&quot;e↑&quot;</a> <a id="11042" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11044" class="Number">60.0</a> <a id="11049" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="11051" class="String">&quot;e↓&quot;</a> <a id="11056" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11058" class="Number">45.0</a> <a id="11063" href="VarNotes.html#3577" class="Function Operator">]</a>
+<a id="11065" href="VarNotes.html#4035" class="Field">mupt</a><a id="11069" class="Symbol">(</a><a id="11070" href="VarNotes.html#10975" class="Function">testevent&#39;</a><a id="11080" class="Symbol">)</a> <a id="11082" class="Symbol">=</a> <a id="11084" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="11086" class="Number">35.0</a> <a id="11091" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="11108" class="String">&quot;μ↑&quot;</a> <a id="11113" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11115" class="Number">40.0</a> <a id="11120" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="11122" class="String">&quot;μ↓&quot;</a> <a id="11127" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11129" class="Number">30.0</a> <a id="11134" href="VarNotes.html#3577" class="Function Operator">]</a>
+<a id="11136" href="VarNotes.html#4062" class="Field">jet₁pt</a><a id="11142" class="Symbol">(</a><a id="11143" href="VarNotes.html#10975" class="Function">testevent&#39;</a><a id="11153" class="Symbol">)</a> <a id="11155" class="Symbol">=</a> <a id="11157" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="11159" class="Number">28.0</a> <a id="11164" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="11181" class="String">&quot;jes↑&quot;</a> <a id="11188" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11190" class="Number">32.0</a> <a id="11195" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="11197" class="String">&quot;jes↓&quot;</a> <a id="11204" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11206" class="Number">25.0</a> <a id="11211" href="VarNotes.html#3577" class="Function Operator">]</a>
+<a id="11213" href="VarNotes.html#4091" class="Field">jet₂pt</a><a id="11219" class="Symbol">(</a><a id="11220" href="VarNotes.html#10975" class="Function">testevent&#39;</a><a id="11230" class="Symbol">)</a> <a id="11232" class="Symbol">=</a> <a id="11234" href="VarNotes.html#3577" class="Function Operator">[</a> <a id="11236" class="Number">26.0</a> <a id="11241" href="VarNotes.html#3577" class="Function Operator">with-variations∶</a> <a id="11258" class="String">&quot;jes↑&quot;</a> <a id="11265" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11267" class="Number">28.0</a> <a id="11272" href="Agda.Builtin.Sigma.html#218" class="InductiveConstructor Operator">,</a> <a id="11274" class="String">&quot;jes↓&quot;</a> <a id="11281" href="VarNotes.html#3520" class="Function Operator">∶</a> <a id="11283" class="Number">23.0</a> <a id="11288" href="VarNotes.html#3577" class="Function Operator">]</a>
+</pre>
+<p>The resulting output of <code>passLep+HT(testevent&#39;)</code> looks
+like</p>
+<pre class="code"><code>┌─────────┬────────────────┐
+│variation│           value│
+├─────────┼────────────────┤
+│nominal  │   passed: 145.0│
+├─────────┼────────────────┤
+│e↑       │   passed: 149.0│
+├─────────┼────────────────┤
+│e↓       │failed selection│
+├─────────┼────────────────┤
+│jes↑     │   passed: 151.0│
+├─────────┼────────────────┤
+│jes↓     │   passed: 139.0│
+├─────────┼────────────────┤
+│μ↑       │   passed: 150.0│
+├─────────┼────────────────┤
+│μ↓       │failed selection│
+└─────────┴────────────────┘</code></pre>
+<p>where now all variations are <em>required</em> to be calculated
+individually: the <code>jes</code> variations indeed are not the same as
+the <code>nominal</code>!</p>
+<h2 id="outlook">Outlook</h2>
+<p>This kind of setup has several nice properties:</p>
+<ul>
+<li><p>Code is clean and does not reference unneeded “details” like
+which variation is currently being calculated.</p></li>
+<li><p>It is efficient: if a computation is needed, it is performed, but
+you won’t get unneccessary uncertainties attached to quantities that are
+unaffected by them.</p></li>
+<li><p>As opposed to a “columnar” format, this results in (potentially)
+faster execution and smaller space on disk.</p></li>
+</ul>
+<!--
+<pre class="Agda"><a id="showMaybe"></a><a id="12462" href="VarNotes.html#12462" class="Function">showMaybe</a> <a id="12472" class="Symbol">:</a> <a id="12474" class="Symbol">(</a><a id="12475" href="VarNotes.html#899" class="Generalizable">A</a> <a id="12477" class="Symbol">→</a> <a id="12479" href="Agda.Builtin.String.html#318" class="Postulate">String</a><a id="12485" class="Symbol">)</a> <a id="12487" class="Symbol">→</a> <a id="12489" href="Agda.Builtin.Maybe.html#118" class="Datatype">Maybe</a> <a id="12495" href="VarNotes.html#899" class="Generalizable">A</a> <a id="12497" class="Symbol">→</a> <a id="12499" href="Agda.Builtin.String.html#318" class="Postulate">String</a>
+<a id="12506" href="VarNotes.html#12462" class="Function">showMaybe</a> <a id="12516" href="VarNotes.html#12516" class="Bound">show&#39;</a> <a id="12522" class="Symbol">(</a><a id="12523" href="Agda.Builtin.Maybe.html#156" class="InductiveConstructor">just</a> <a id="12528" href="VarNotes.html#12528" class="Bound">x</a><a id="12529" class="Symbol">)</a> <a id="12531" class="Symbol">=</a> <a id="12533" class="String">&quot;passed: &quot;</a> <a id="12544" href="Data.String.Base.html#2375" class="Function Operator">++</a> <a id="12547" href="VarNotes.html#12516" class="Bound">show&#39;</a> <a id="12553" href="VarNotes.html#12528" class="Bound">x</a>
+  <a id="12557" class="Keyword">where</a> <a id="12563" class="Keyword">open</a> <a id="12568" class="Keyword">import</a> <a id="12575" href="Data.String.html" class="Module">Data.String</a> <a id="12587" class="Keyword">using</a> <a id="12593" class="Symbol">(</a><a id="12594" href="Data.String.Base.html#2375" class="Function Operator">_++_</a><a id="12598" class="Symbol">)</a>
+<a id="12600" href="VarNotes.html#12462" class="Function">showMaybe</a> <a id="12610" class="Symbol">_</a> <a id="12612" href="Agda.Builtin.Maybe.html#177" class="InductiveConstructor">nothing</a> <a id="12620" class="Symbol">=</a> <a id="12622" class="String">&quot;failed selection&quot;</a>
+
+
+<a id="testHT"></a><a id="12643" href="VarNotes.html#12643" class="Function">testHT</a> <a id="12650" class="Symbol">:</a> <a id="12652" href="Agda.Builtin.String.html#318" class="Postulate">String</a>
+<a id="12659" href="VarNotes.html#12643" class="Function">testHT</a> <a id="12666" class="Symbol">=</a> <a id="12668" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="12678" href="Agda.Builtin.Float.html#1262" class="Primitive">show</a> <a id="12683" class="Symbol">(</a><a id="12684" href="VarNotes.html#8173" class="Function">HT</a> <a id="12687" href="VarNotes.html#5473" class="Function">testevent</a><a id="12696" class="Symbol">)</a>
+
+<a id="testPassLepSel"></a><a id="12699" href="VarNotes.html#12699" class="Function">testPassLepSel</a> <a id="12714" class="Symbol">:</a> <a id="12716" href="Agda.Builtin.String.html#318" class="Postulate">String</a>
+<a id="12723" href="VarNotes.html#12699" class="Function">testPassLepSel</a> <a id="12738" class="Symbol">=</a> <a id="12740" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="12750" href="Data.Bool.Show.html#372" class="Function">B.show</a> <a id="12757" class="Symbol">(</a><a id="12758" href="VarNotes.html#6537" class="Function">passLepSelection</a> <a id="12775" href="VarNotes.html#5473" class="Function">testevent</a><a id="12784" class="Symbol">)</a>
+  <a id="12788" class="Keyword">where</a> <a id="12794" class="Keyword">import</a> <a id="12801" href="Data.Bool.Show.html" class="Module">Data.Bool.Show</a> <a id="12816" class="Symbol">as</a> <a id="12819" class="Module">B</a>
+
+<a id="testGoodHT"></a><a id="12822" href="VarNotes.html#12822" class="Function">testGoodHT</a> <a id="12833" class="Symbol">:</a> <a id="12835" href="Agda.Builtin.String.html#318" class="Postulate">String</a>
+<a id="12842" href="VarNotes.html#12822" class="Function">testGoodHT</a> <a id="12853" class="Symbol">=</a> <a id="12855" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="12865" class="Symbol">(</a><a id="12866" href="VarNotes.html#12462" class="Function">showMaybe</a> <a id="12876" href="Agda.Builtin.Float.html#1262" class="Primitive">show</a><a id="12880" class="Symbol">)</a> <a id="12882" class="Symbol">(</a><a id="12883" href="VarNotes.html#9585" class="Function">passLep+HT</a> <a id="12894" href="VarNotes.html#5473" class="Function">testevent</a><a id="12903" class="Symbol">)</a>
+
+<a id="testpretty"></a><a id="12906" href="VarNotes.html#12906" class="Function">testpretty</a> <a id="testpretty&#39;"></a><a id="12917" href="VarNotes.html#12917" class="Function">testpretty&#39;</a> <a id="12929" class="Symbol">:</a> <a id="12931" href="Agda.Builtin.String.html#318" class="Postulate">String</a>
+<a id="12938" href="VarNotes.html#12906" class="Function">testpretty</a> <a id="12949" class="Symbol">=</a> <a id="12951" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="12961" class="Symbol">(</a><a id="12962" href="VarNotes.html#12462" class="Function">showMaybe</a> <a id="12972" href="Agda.Builtin.Float.html#1262" class="Primitive">show</a><a id="12976" class="Symbol">)</a> <a id="12978" class="Symbol">(</a><a id="12979" href="VarNotes.html#9585" class="Function">passLep+HT</a> <a id="12990" href="VarNotes.html#5473" class="Function">testevent</a><a id="12999" class="Symbol">)</a>
+<a id="13001" href="VarNotes.html#12917" class="Function">testpretty&#39;</a> <a id="13013" class="Symbol">=</a> <a id="13015" href="VarNotes.html#2552" class="Function">prettyVar</a> <a id="13025" class="Symbol">(</a><a id="13026" href="VarNotes.html#12462" class="Function">showMaybe</a> <a id="13036" href="Agda.Builtin.Float.html#1262" class="Primitive">show</a><a id="13040" class="Symbol">)</a> <a id="13042" class="Symbol">(</a><a id="13043" href="VarNotes.html#9585" class="Function">passLep+HT</a> <a id="13054" href="VarNotes.html#10975" class="Function">testevent&#39;</a><a id="13064" class="Symbol">)</a>
+</pre>-->
+</body>
+</html>
